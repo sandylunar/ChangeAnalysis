@@ -61,7 +61,8 @@ public class Run {
 		}
 	}
 	if(args[0].equalsIgnoreCase("prepare-trainset")){
-	     //String source = "F:\\PredictReqChange.RE.2013\\data\\predict\\ChangeMetrix_13v.xls";
+	     
+		//String source = "F:\\PredictReqChange.RE.2013\\data\\predict\\ChangeMetrix_13v.xls";
 	     //String target = "F:\\PredictReqChange.RE.2013\\data\\predict\\PredictorValues.xls";
 	     //String targetDIR = "F:\\PredictReqChange.RE.2013\\data\\predict\\trainset\\";
 
