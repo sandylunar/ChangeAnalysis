@@ -1,0 +1,3 @@
+M	core/java/android/nfc/INfcAdapterExtras.aidl
+M	nfc-extras/java/com/android/nfc_extras/NfcAdapterExtras.java
+M	nfc-extras/java/com/android/nfc_extras/NfcExecutionEnvironment.java

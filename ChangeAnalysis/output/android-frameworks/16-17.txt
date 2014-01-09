@@ -1,0 +1,11 @@
+M	core/java/android/bluetooth/BluetoothA2dp.java
+M	core/java/android/bluetooth/BluetoothDevice.java
+M	core/java/android/bluetooth/BluetoothDeviceProfileState.java
+M	core/java/android/bluetooth/BluetoothHeadset.java
+M	core/java/android/bluetooth/IBluetoothA2dp.aidl
+M	core/java/android/bluetooth/IBluetoothHeadset.aidl
+M	core/java/android/server/BluetoothA2dpService.java
+M	core/java/android/server/BluetoothEventLoop.java
+M	core/java/android/server/BluetoothService.java
+M	core/jni/android_server_BluetoothEventLoop.cpp
+M	core/jni/android_server_BluetoothService.cpp
