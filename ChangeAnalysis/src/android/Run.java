@@ -21,7 +21,6 @@ public class Run {
 	 ArrayList<String> tags = null;
 	 String tagPath = userDir+"\\data\\tag-frameworks-trim.txt";
 	 String changeTableName = "change_history";
-	 String metricTableName = "predict_factors";
 	 String tagTableName = "android_tags";
 	
 	 if(args[0].equalsIgnoreCase("prepare-raw-data")){
@@ -67,17 +66,14 @@ public class Run {
 	     //String targetDIR = "F:\\PredictReqChange.RE.2013\\data\\predict\\trainset\\";
 
 	    CalculatePredictFactors c = new CalculatePredictFactors();
-	    try {
-		c.readAndCalculate(changeTableName, metricTableName);
-	    } catch (RowsExceededException e) {
-		e.printStackTrace();
-	    } catch (BiffException e) {
-		e.printStackTrace();
-	    } catch (WriteException e) {
-		e.printStackTrace();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+		try {
+			tags = PrepareRawData.readTags(tagPath);
+			c.readAndCalculateFromMySQL(changeTableName,tags.size(),0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
     }

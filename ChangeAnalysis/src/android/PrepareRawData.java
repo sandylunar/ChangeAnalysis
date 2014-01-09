@@ -67,7 +67,7 @@ public class PrepareRawData {
 	stmt.executeUpdate(createTableSQL);
 
 	// 逐个读取txt文件
-	for (int i = 0; i < tags.size() - 1; i++) {
+	for (int i = 27; i < tags.size() - 1; i++) {
 	    String filePath = targetDir + "\\" + Integer.toString(i + 1) + "-"
 		    + Integer.toString(i + 2) + ".txt";
 	    BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -100,6 +100,7 @@ public class PrepareRawData {
 			rs.updateInt(Integer.toString(i + 1) + "_"
 				    + Integer.toString(i + 2), changeInt);
 			rs.updateRow();
+			rs.close();
 			System.out.println("MySQL: update "+tokens[1]+", "+Integer.toString(i + 1) + "_"
 				    + Integer.toString(i + 2)+", "+changeInt);
 		    }
@@ -139,7 +140,7 @@ public class PrepareRawData {
 
 	Connector c = new Connector();
 	Statement stmt = c.getNewStatement();
-	stmt.executeUpdate("drop table if exists " + tablename);
+	//stmt.executeUpdate("drop table if exists " + tablename);
 	stmt.executeUpdate(createTableSQL);
 	System.out.println("MySQL: " + createTableSQL);
 
