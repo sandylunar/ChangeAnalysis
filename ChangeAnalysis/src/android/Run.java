@@ -65,7 +65,7 @@ public class Run {
 	     //String target = "F:\\PredictReqChange.RE.2013\\data\\predict\\PredictorValues.xls";
 	     //String targetDIR = "F:\\PredictReqChange.RE.2013\\data\\predict\\trainset\\";
 
-	    CalculatePredictFactors c = new CalculatePredictFactors();
+	    CalculatePredictFactorsForSQL c = new CalculatePredictFactorsForSQL();
 		try {
 			tags = PrepareRawData.readTags(tagPath);
 			c.readAndCalculateFromMySQL(changeTableName,tags.size(),0);
