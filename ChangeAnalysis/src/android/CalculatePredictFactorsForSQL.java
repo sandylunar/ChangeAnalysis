@@ -81,6 +81,7 @@ public class CalculatePredictFactorsForSQL {
 			int value = 0;
 			if (rs.next())
 				value = rs.getInt(currColumn + 1);
+			rs.close();
 
 			// 当新版本中为修改的状态时，才为1
 			if (value == 1)
@@ -136,7 +137,7 @@ public class CalculatePredictFactorsForSQL {
 				value = rs.getInt(prev);
 				// 计算freq, occur
 				// Cell中的值为1或者2时，Freq++， Occur++
-				if (value == 1 || value == 2) {// ||grid.getContents().equals("2")
+				if (value == 1 || value == 2) {// ||grid. getContents().equals("2")
 					Double d = freq.get(id);
 
 					if (d == null)
@@ -151,7 +152,7 @@ public class CalculatePredictFactorsForSQL {
 					distance.put(id, tmp + currColumn - prev);
 				}
 			}
-		}
+		}rs.close();
 	}
 
 	private Double getModuleVolatility(String moduleWrite, int currColumn) {
@@ -216,6 +217,7 @@ public class CalculatePredictFactorsForSQL {
 			packageList.add(tokens[level]);
 
 		}
+		rs.close();
 		rows = count;
 		System.out.println("MySQL: scan " + count + ", find "
 				+ packageList.toString());
@@ -242,6 +244,7 @@ public class CalculatePredictFactorsForSQL {
 		String name = "";
 		if (rs.next())
 			name = rs.getString("name");
+		rs.close();
 		return name;
 	}
 
@@ -265,7 +268,7 @@ public class CalculatePredictFactorsForSQL {
 
 		// static final int[] numberOfUC =
 		// {186,189,195,221,276,310,303,339,360,394,394,426,452,461};//V0-Vmax的用例数
-		UCNAME = 2;
+		//UCNAME = 2;
 		this.packageLevel = packageLevel;
 		modules = getPackageList(changeTableName, packageLevel);
 		volatility = new int[END - BEGIN + 1][modules.length][2];
@@ -281,8 +284,9 @@ public class CalculatePredictFactorsForSQL {
 					+ fileID;
 			rs = statement.executeQuery(query);
 			int value = 0;
-			if (rs.next())
+			if (rs.next()){
 				value = rs.getInt(t);
+			}rs.close();
 			if (value == 2)
 				return true;
 		}
@@ -299,8 +303,9 @@ public class CalculatePredictFactorsForSQL {
 					+ fileID;
 			rs = statement.executeQuery(query);
 			int value = 0;
-			if (rs.next())
+			if (rs.next()){
 				value = rs.getInt(t);
+				}rs.close();
 
 			if (value == -1)
 				return true;
@@ -321,7 +326,7 @@ public class CalculatePredictFactorsForSQL {
 					isFirst = false;
 				}
 			}
-		}
+		}rs.next();
 
 		if (isFirst)
 			life.put(fileID, currColumn - BEGIN + 2.0); // 第一个版本中新增的
@@ -349,7 +354,7 @@ public class CalculatePredictFactorsForSQL {
 		boolean isDel = false;
 		boolean isAdd = false;
 
-		for (int currColumn = BEGIN + OFFSET; currColumn <= END; currColumn++) {
+		for (int currColumn = 29; currColumn <= END; currColumn++) {
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -364,9 +369,10 @@ public class CalculatePredictFactorsForSQL {
 
 			System.out
 					.println("Working on Lifecycle, Sequency, Recency, Frequency, Distance, Occurrence, and actual_changes");
+			
 			for (int fileID = 1; fileID < rows; fileID++) {
 				if (fileID % 1000 == 0)
-					System.out.print(" " + fileID);
+					System.out.println(" " + fileID);
 				isFirst = true;
 				lastChange = BEGIN;
 
@@ -399,8 +405,9 @@ public class CalculatePredictFactorsForSQL {
 
 			double value;
 			for (Integer j : fileIDs) {
-
-				String insertSQL = "insert into "
+				String insertSQL=null;
+				
+				 insertSQL = "insert into "
 						+ currTableName
 						+ " (id,frequency,distance,lifecycle,sequence,occurrence,recency,pakvolality_single,pakvolality_cum,evolve_topic,actual_change,logistic,predict_change) values (?";
 
@@ -410,7 +417,8 @@ public class CalculatePredictFactorsForSQL {
 
 				insertSQL += ")";
 
-				System.out.println(insertSQL);
+				if (j % 1000 == 0)
+					System.out.println(j+": "+insertSQL);
 
 				String moduleWrite = getPackageName(j);
 
@@ -439,7 +447,8 @@ public class CalculatePredictFactorsForSQL {
 				value = getModuleVolatility(moduleWrite, currColumn);
 				preStmt.setDouble(8, value);
 
-				value = getModuleVolatilityAVG(moduleWrite, currColumn);
+				//value = getModuleVolatilityAVG(moduleWrite, currColumn);
+				value = getModuleVolatilityAVGFromPrev(j,currColumn,moduleWrite);
 				preStmt.setDouble(9, value);
 				preStmt.setDouble(10, 0.0);
 
@@ -448,9 +457,14 @@ public class CalculatePredictFactorsForSQL {
 				preStmt.setDouble(12, 0.0);
 				preStmt.setDouble(13, 0.0);
 
-				preStmt.executeUpdate();
+				try{
+					preStmt.executeUpdate();
+				}catch(SQLException e){
+					continue;
+				}
+				preStmt.close();
 
-				System.out.println("MySQL: " + preStmt.toString());
+				//System.out.println("MySQL: " + preStmt.toString());
 			}
 
 			freq.clear();
@@ -462,6 +476,41 @@ public class CalculatePredictFactorsForSQL {
 		System.out.println("Done...");
 		closeForMysql();
 
+	}
+
+	/**
+	 * Bug
+	 * @param j
+	 * @param currColumn
+	 * @param moduleWrite
+	 * @return
+	 * @throws SQLException
+	 */
+	private double getModuleVolatilityAVGFromPrev(Integer j, int currColumn,String moduleWrite) throws SQLException {
+		double single = getModuleVolatility(moduleWrite, currColumn);
+		if(currColumn==BEGIN)
+			return single;
+		
+		String prev = (currColumn - BEGIN ) + "_"
+		+ (currColumn - BEGIN + 1);
+		double value = 0.0;
+		rs = statement.executeQuery("select id from "+changeHistoryTable+" where name like \'"+moduleWrite+"%\'");
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		while(rs.next()){
+			int id = rs.getInt("id");
+			ids.add(id);
+		}rs.close();
+		
+		for(Integer id: ids){
+			rs = statement.executeQuery("select pakvolality_cum from "+prev +" where id="+id);
+			if(rs.next()){
+				value = rs.getDouble("pakvolality_cum");
+				rs.close();
+				break;
+			}
+			rs.close();
+		}
+		return (value*(currColumn-2-BEGIN)+single)/(currColumn-1-BEGIN);
 	}
 
 	void readVolatility(Sheet srcSheet) {
@@ -552,7 +601,7 @@ public class CalculatePredictFactorsForSQL {
 		rs = statement.executeQuery(query);
 		if (rs.next()) {
 			value = rs.getInt(currColumn);
-		}
+		}rs.close();
 
 		int tmp = volatility[currColumn - BEGIN][moduleLocation][0];
 		volatility[currColumn - BEGIN][moduleLocation][0] = tmp + 1;
@@ -585,7 +634,7 @@ public class CalculatePredictFactorsForSQL {
 					lastChange = t;
 				}
 			}
-		}
+		}rs.close();
 
 		if (currColumn == 2)
 			seq.put(fileID, 0.0);

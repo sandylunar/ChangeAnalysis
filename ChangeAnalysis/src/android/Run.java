@@ -5,96 +5,109 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import jxl.read.biff.BiffException;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
-
 public class Run {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-    	
-	String userDir = System.getProperty("user.dir");
-	String targetDir = userDir+"\\output\\android-frameworks";
-	 ArrayList<String> tags = null;
-	 String tagPath = userDir+"\\data\\tag-frameworks-trim.txt";
-	 String changeTableName = "change_history";
-	 String tagTableName = "android_tags";
-	
-	 if(args[0].equalsIgnoreCase("prepare-raw-data")){
-	    //读取tag文件中各个版本号，存入tags;
-	    try {
-		System.out.println("1. Reading tags...");
-		tags = PrepareRawData.readTags(tagPath);
-		System.out.println("Tags are: \n"+tags.toString());
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	    
-	    //生成bat文件
-	    String batPath = userDir+"\\output\\git-diff.bat";
-	    String execDir = "G:\\android-src\\frameworks";
-	    System.out.println("2. Generate Bat file:"+batPath);
-	    try {
-		PrepareRawData.generateBat(batPath,targetDir,execDir,tags);
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	}
-	
-	if(args[0].equalsIgnoreCase("dump-raw-data")){
-		// 将txt存入数据库
-		
-		
-		try {
-		tags = PrepareRawData.readTags(tagPath);
-		//PrepareRawData.dumpTagToMySQL(tagTableName, tags);
-		PrepareRawData.dumpRawTxtToMySQL(changeTableName, targetDir,
-			tags);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-		    e.printStackTrace();
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main(String[] args) throws Exception {
+
+		String userDir = System.getProperty("user.dir");
+		String targetDir = userDir + "\\output\\android-frameworks";
+		String tagPath = userDir + "\\data\\tag-frameworks-trim.txt";
+		String changeTableName = "change_history";
+		String tagTableName = "android_tags";
+		ArrayList<String> tags = PrepareRawData.readTags(tagPath);
+
+		if (args[0].equalsIgnoreCase("prepare-raw-data")) {
+			System.out.println("1. Reading tags...");
+
+			System.out.println("Tags are: \n" + tags.toString());
+
+			// 生成bat文件
+			String batPath = userDir + "\\output\\git-diff.bat";
+			String execDir = "G:\\android-src\\frameworks";
+			System.out.println("2. Generate Bat file:" + batPath);
+			try {
+				PrepareRawData.generateBat(batPath, targetDir, execDir, tags);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (args[0].equalsIgnoreCase("dump-raw-data")) {
+			// 将txt存入数据库
+			try {
+				if (args.length > 1 && args[1].equalsIgnoreCase("-t")) {
+					PrepareRawData.dumpTagToMySQL(tagTableName, tags);
+				}
+				PrepareRawData.dumpRawTxtToMySQL(changeTableName, targetDir,
+						tags);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (args[0].equalsIgnoreCase("prepare-trainset")) {
+			CalculatePredictFactorsForSQL c = new CalculatePredictFactorsForSQL();
+			try {
+				c.readAndCalculateFromMySQL(changeTableName, tags.size(), 0);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (args[0].equalsIgnoreCase("predict-lr")) {
+			if (args.length < 3) {
+				System.err.println("Please input other parameters");
+				return;
+			}
+
+			PredictByLR predictor = new PredictByLR();
+
+			if (args[1].equalsIgnoreCase("-b")) {
+				predictor.setParameterSelection(PredictByLR.BACKWARD);
+			} else
+				System.err.println("Unknown input:" + args[1]);
+
+			if (args[2].equalsIgnoreCase("-s")) {
+				predictor.setDatasetConfig(PredictByLR.SINGLE_DATASET);
+
+			} else if (args[2].equalsIgnoreCase("-c"))
+				predictor.setDatasetConfig(PredictByLR.CUMULATIVE_DATASET);
+			else
+				System.err.println("Unknown input:" + args[2]);
+			
+			predictor.setStartVersion(1);
+			predictor.setFinalVersion(4);//tags.size();
+			predictor.setClassIndex(10);
+			predictor.setRemoveAttributes(new int[]{0,6,7,9,11,12});
+
+			ArrayList<Integer> parameters = predictor.selectParameters();
+			System.out.println("Seleted parameters are at columns(start from 0): "+parameters.toString());
+			//predictor.runForLRModels(parameters);
+			//predictor.selectCutoffs();
 		}
 	}
-	if(args[0].equalsIgnoreCase("prepare-trainset")){
-	     
-		//String source = "F:\\PredictReqChange.RE.2013\\data\\predict\\ChangeMetrix_13v.xls";
-	     //String target = "F:\\PredictReqChange.RE.2013\\data\\predict\\PredictorValues.xls";
-	     //String targetDIR = "F:\\PredictReqChange.RE.2013\\data\\predict\\trainset\\";
 
-	    CalculatePredictFactorsForSQL c = new CalculatePredictFactorsForSQL();
+	public static void callCmd(String locationCmd) {
 		try {
-			tags = PrepareRawData.readTags(tagPath);
-			c.readAndCalculateFromMySQL(changeTableName,tags.size(),0);
-		} catch (SQLException e) {
-			e.printStackTrace();
+			Process child = Runtime.getRuntime().exec(
+					"cmd.exe /C start " + locationCmd);
+			InputStream in = child.getInputStream();
+			while (((int) in.read()) != -1) {
+			}
+			in.close();
+			try {
+				child.waitFor();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("done");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-    }
-    
-    public static void  callCmd(String locationCmd){
-        try {
-        Process child = Runtime.getRuntime().exec("cmd.exe /C start "+locationCmd);
-        InputStream in = child.getInputStream();
-        int c;
-        while ((c = in.read()) != -1) {
-    }
-     in.close();
-     try {
-         child.waitFor();
-     } catch (InterruptedException e) {
-         e.printStackTrace();
-     }
-     System.out.println("done");
-   } catch (IOException e) {
-         e.printStackTrace();
-   }
-}
-
 }
