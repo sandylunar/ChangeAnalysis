@@ -19,9 +19,9 @@ import java.sql.Statement;
 public class Connector {
 
     private String driverClass;
-    private String url;
-    private String user;
-    private String pwd;
+    private static String url;
+    private static String user;
+    private static String pwd;
 
     Connection conn = null;
     Statement stmt = null;
@@ -30,22 +30,22 @@ public class Connector {
     /** Creates a new instance of Connector */
     public Connector() {
 	driverClass = "com.mysql.jdbc.Driver";
-	url = "jdbc:mysql://localhost:3306/android_frameworks_base";
-	user = "root";
-	pwd = "123456";
+	setUrl("jdbc:mysql://localhost:3306/android_frameworks_base");
+	setUser("root");
+	setPwd("123456");
 	conn = getNewConnection();
     }
 
     public Connector(String url, String user, String pwd) {
-	this.url = url;
-	this.user = user;
-	this.pwd = pwd;
+	this.setUrl(url);
+	this.setUser(user);
+	this.setPwd(pwd);
     }
 
     public Connection getNewConnection() {
 	try {
 	    Class.forName(driverClass);
-	    conn = DriverManager.getConnection(url, user, pwd);
+	    conn = DriverManager.getConnection(getUrl(), getUser(), getPwd());
 	} catch (ClassNotFoundException ex) {
 	    System.out.println("cannot load db drivers!");
 	    System.exit(1);
@@ -62,7 +62,8 @@ public class Connector {
 	try {
 	    if(conn == null)
 		conn = getNewConnection();
-	    stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+	    stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    stmt.setFetchSize(Integer.MIN_VALUE);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	    System.exit(1);
@@ -73,7 +74,9 @@ public class Connector {
 
     public PreparedStatement getNewPreparedStatement(String str) {
 	try {
-	    pstmt = conn.prepareStatement(str);
+	    pstmt = conn.prepareStatement(str, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    pstmt.setFetchSize(Integer.MIN_VALUE);  
+	    pstmt.setFetchDirection(ResultSet.FETCH_REVERSE);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	    System.exit(1);
@@ -117,5 +120,31 @@ public class Connector {
 	stmt.executeUpdate("create  table if not exists test(id int primary key)");
 	stmt.executeUpdate("insert into test values(12)"); 
 	c.close();
+	
+	System.out.println(12);
     }
+
+	public static String getUrl() {
+		return url;
+	}
+
+	public static void setUrl(String url) {
+		Connector.url = url;
+	}
+
+	public static String getUser() {
+		return user;
+	}
+
+	public static void setUser(String user) {
+		Connector.user = user;
+	}
+
+	public static String getPwd() {
+		return pwd;
+	}
+
+	public static void setPwd(String pwd) {
+		Connector.pwd = pwd;
+	}
 }

@@ -81,7 +81,7 @@ public class Run {
 				System.err.println("Unknown input:" + args[2]);
 			
 			predictor.setStartVersion(1);
-			predictor.setFinalVersion(4);//tags.size();
+			predictor.setFinalVersion(3);//tags.size();
 			predictor.setClassIndex(10);
 			predictor.setRemoveAttributes(new int[]{0,6,7,9,11,12});
 
@@ -89,6 +89,14 @@ public class Run {
 			System.out.println("Seleted parameters are at columns(start from 0): "+parameters.toString());
 			//predictor.runForLRModels(parameters);
 			//predictor.selectCutoffs();
+		}
+		
+		if(args[0].equalsIgnoreCase("add-column-dataset")){
+			PrepareRawData.addColumnDataset(tags.size());
+		}
+		
+		if(args[0].equalsIgnoreCase("assemble-all-cle")){
+			PrepareRawData.assembleAllForCle("dataset_all",tags.size());
 		}
 	}
 

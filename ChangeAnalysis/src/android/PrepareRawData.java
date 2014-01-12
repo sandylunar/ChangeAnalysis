@@ -67,7 +67,7 @@ public class PrepareRawData {
 	stmt.executeUpdate(createTableSQL);
 
 	// 逐个读取txt文件
-	for (int i = 27; i < tags.size() - 1; i++) {
+	for (int i = 0; i < tags.size() - 1; i++) {
 	    String filePath = targetDir + "\\" + Integer.toString(i + 1) + "-"
 		    + Integer.toString(i + 2) + ".txt";
 	    BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -155,4 +155,41 @@ public class PrepareRawData {
 	c.close();
     }
 
+	public static void addColumnDataset(int size) throws SQLException {
+		Connector c = new Connector();
+		Statement stmt = c.getNewStatement();
+		for(int i = 1; i < size-1; i++){
+			String tablename = i+"_"+(i+1);
+			String alter = "alter table "+tablename+" drop column dataset";
+			System.out.println(i+": "+alter);
+			stmt.executeUpdate(alter);
+			
+			alter = "alter table "+tablename+" add dataset int(5) default "+i;
+			System.out.println(i+": "+alter);
+			stmt.executeUpdate(alter);
+			
+		}
+		c.close();
+	}
+
+	public static void assembleAllForCle(String tablename, int size) throws SQLException {
+		Connector c = new Connector();
+		Statement stmt = c.getNewStatement();
+		
+		for(int i = 1; i < size-1; i++){
+			//create table newsheet  select * from sheet1 union all select * from sheet2
+			String subtable,query;
+			subtable = i+"_"+(i+1);
+			if(i==1){
+				query = "create table if not exists "+tablename+" select * from "+subtable;
+			}
+			else{
+				query = "insert into "+tablename+" select * from "+subtable;
+			}
+			System.out.println(i+": "+query);
+			stmt.executeUpdate(query);
+		}
+		c.close();
+	}	
+	
 }

@@ -12,6 +12,8 @@ import weka.core.Instances;
 import weka.core.Utils;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.NumericToNominal;
 import weka.filters.unsupervised.attribute.Remove;
 import database.Connector;
 
@@ -119,6 +121,8 @@ public class PredictByLR {
 		attsel.setEvaluator(eval);
 		attsel.setSearch(search);
 		attsel.SelectAttributes(data);
+		System.out.println("Set up Attribute Selection..");
+		
 		int[] indices = attsel.selectedAttributes();
 		System.out.println(version+": selected attribute indices (starting with 0):\n"
 				+ Utils.arrayToString(indices));
@@ -129,9 +133,9 @@ public class PredictByLR {
 
 	private Instances assembleDataset(int version) throws Exception {
 		InstanceQuery query = new InstanceQuery();
-		query.setDatabaseURL(Connector.getUrl());
-		query.setUsername(Connector.getUser());
-		query.setPassword(Connector.getPwd());
+		query.setDatabaseURL("jdbc:mysql://localhost:3306/android_frameworks_base");
+		query.setUsername("root");
+		query.setPassword("123456");
 		Instances data = null;
 		if (this.datasetConfig == SINGLE_DATASET) {
 			String querySQL = "select * from " + version + "_" + (version + 1);
@@ -148,6 +152,11 @@ public class PredictByLR {
 		// assign the class attribute
 		Remove remove = new Remove();
 		if (data != null) {
+			NumericToNominal nnFilter = new NumericToNominal();
+			nnFilter.setInputFormat(data);
+			nnFilter.setAttributeIndices(Integer.toString(classIndex+1));
+			data = Filter.useFilter(data, nnFilter);
+			
 			data.setClassIndex(classIndex);
 			remove.setInputFormat(data);
 			remove.setAttributeIndicesArray(removeAttributes);
