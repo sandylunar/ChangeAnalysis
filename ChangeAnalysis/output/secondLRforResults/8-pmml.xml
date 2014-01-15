@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><PMML xmlns="http://www.dmg.org/PMML-3_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1" xsi:schemaLocation="http://www.dmg.org/PMML-3_1 pmml-3-1.xsd">
+	<Header copyright="Copyright(c) SPSS Inc. 1989-2007. All rights reserved.">
+		  <Application name="SPSS for Microsoft Windows Release 16.0" version="16.0"/>
+	</Header>
+	<DataDictionary numberOfFields="7">
+		  <DataField dataType="double" displayName="actual_change" name="actual_change" optype="categorical">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+			  <Value displayValue="0.0" property="valid" value="0"/>
+			  <Value displayValue="1.0" property="valid" value="1"/>
+		</DataField>
+		  <DataField dataType="double" displayName="frequency" name="frequency" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+		  <DataField dataType="double" displayName="distance" name="distance" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+		  <DataField dataType="double" displayName="lifecycle" name="lifecycle" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+		  <DataField dataType="double" displayName="sequence" name="sequence" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+		  <DataField dataType="double" displayName="occurrence" name="occurrence" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+		  <DataField dataType="double" displayName="pakvolality_cum" name="pakvolality_cum" optype="continuous">
+			  <Extension extender="spss.com" name="format" value="5"/>
+			  <Extension extender="spss.com" name="width" value="10"/>
+			  <Extension extender="spss.com" name="decimals" value="3"/>
+		</DataField>
+	</DataDictionary>
+	<GeneralRegressionModel functionName="classification" modelName="multinomialLogistic" modelType="multinomialLogistic" targetVariableName="actual_change">
+		  <Extension extender="spss.com" name="numberParameters" value="7"/>
+		  <MiningSchema>
+			  <MiningField missingValueTreatment="asIs" name="actual_change" usageType="predicted"/>
+			  <MiningField importance="4.878577e-001" missingValueTreatment="asIs" name="frequency" usageType="active"/>
+			  <MiningField importance="5.068795e-003" missingValueTreatment="asIs" name="distance" usageType="active"/>
+			  <MiningField importance="0.000000e+000" missingValueTreatment="asIs" name="lifecycle" usageType="active"/>
+			  <MiningField importance="2.161440e-001" missingValueTreatment="asIs" name="sequence" usageType="active"/>
+			  <MiningField importance="2.909295e-001" missingValueTreatment="asIs" name="occurrence" usageType="active"/>
+			  <MiningField importance="0.000000e+000" missingValueTreatment="asIs" name="pakvolality_cum" usageType="active"/>
+		</MiningSchema>
+		  <ParameterList>
+			  <Parameter label="Intercept" name="P0000001"/>
+			  <Parameter label="frequency" name="P0000002"/>
+			  <Parameter label="distance" name="P0000003"/>
+			  <Parameter label="lifecycle" name="P0000004"/>
+			  <Parameter label="sequence" name="P0000005"/>
+			  <Parameter label="occurrence" name="P0000006"/>
+			  <Parameter label="pakvolality_cum" name="P0000007"/>
+		</ParameterList>
+		  <FactorList>
+		</FactorList>
+		  <CovariateList>
+			  <Predictor name="frequency"/>
+			  <Predictor name="distance"/>
+			  <Predictor name="lifecycle"/>
+			  <Predictor name="sequence"/>
+			  <Predictor name="occurrence"/>
+			  <Predictor name="pakvolality_cum"/>
+		</CovariateList>
+		  <PPMatrix>
+			  <PPCell parameterName="P0000002" predictorName="frequency" value="1"/>
+			  <PPCell parameterName="P0000003" predictorName="distance" value="1"/>
+			  <PPCell parameterName="P0000004" predictorName="lifecycle" value="1"/>
+			  <PPCell parameterName="P0000005" predictorName="sequence" value="1"/>
+			  <PPCell parameterName="P0000006" predictorName="occurrence" value="1"/>
+			  <PPCell parameterName="P0000007" predictorName="pakvolality_cum" value="1"/>
+		</PPMatrix>
+		  <ParamMatrix>
+			  <PCell beta="-2.88771114321306" df="1" parameterName="P0000001" targetCategory="1"/>
+			  <PCell beta="4.49151541385748" df="1" parameterName="P0000002" targetCategory="1"/>
+			  <PCell beta="-0.0665579998019562" df="1" parameterName="P0000003" targetCategory="1"/>
+			  <PCell beta="0.00531394599760822" df="1" parameterName="P0000004" targetCategory="1"/>
+			  <PCell beta="0.430095250585707" df="1" parameterName="P0000005" targetCategory="1"/>
+			  <PCell beta="-0.196752697376256" df="1" parameterName="P0000006" targetCategory="1"/>
+			  <PCell beta="-1.10872160799597" df="1" parameterName="P0000007" targetCategory="1"/>
+		</ParamMatrix>
+	</GeneralRegressionModel>
+</PMML>
