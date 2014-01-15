@@ -4,8 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Run {
+	
+	public static int numTags;
+	public static int startVersion;
+	public static List<String> predictors = null;
+	public static List<LREquation> equations = null;
 
 	/**
 	 * @param args
@@ -15,10 +21,12 @@ public class Run {
 
 		String userDir = System.getProperty("user.dir");
 		String targetDir = userDir + "\\output\\android-frameworks";
-		String tagPath = userDir + "\\data\\tag-frameworks-trim.txt";
+		String tagPath = userDir + "/data/tag-frameworks-trim.txt";
 		String changeTableName = "change_history";
 		String tagTableName = "android_tags";
 		ArrayList<String> tags = PrepareRawData.readTags(tagPath);
+		numTags = tags.size();
+		startVersion = 1;
 
 		if (args[0].equalsIgnoreCase("prepare-raw-data")) {
 			System.out.println("1. Reading tags...");
@@ -53,7 +61,7 @@ public class Run {
 		if (args[0].equalsIgnoreCase("prepare-trainset")) {
 			CalculatePredictFactorsForSQL c = new CalculatePredictFactorsForSQL();
 			try {
-				c.readAndCalculateFromMySQL(changeTableName, tags.size(), 0);
+				c.readAndCalculateFromMySQL(changeTableName, numTags, 0);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -92,11 +100,28 @@ public class Run {
 		}
 		
 		if(args[0].equalsIgnoreCase("add-column-dataset")){
-			PrepareRawData.addColumnDataset(tags.size());
+			PrepareRawData.addColumnDataset(numTags);
 		}
 		
 		if(args[0].equalsIgnoreCase("assemble-all-cle")){
-			PrepareRawData.assembleAllForCle("dataset_all",tags.size());
+			PrepareRawData.assembleAllForCle("dataset_all",numTags);
+		}
+		if(args[0].equalsIgnoreCase("select-predictors")){
+			String fp_sourceDir = userDir + "\\output\\firstLRforPredictors\\";
+			String lr_sourceDir = userDir + "\\output\\secondLRforResults\\";
+			if(args[1].equalsIgnoreCase("-f")){
+				predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
+				System.out.println("Select predictors from CLE results: "+predictors);
+			}
+
+			if(args[1].equalsIgnoreCase("-s")){
+				equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
+				String initCutoffTable = "cutoff_all";
+				//PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
+				
+				PredictByLR.selectFinalCufoffs(numTags,startVersion,initCutoffTable,"cutoff_final");
+			}
+
 		}
 	}
 
