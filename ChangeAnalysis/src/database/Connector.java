@@ -62,8 +62,9 @@ public class Connector {
 	try {
 	    if(conn == null)
 		conn = getNewConnection();
-	    stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	    stmt.setFetchSize(Integer.MIN_VALUE);
+	    //stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+	    //stmt.setFetchSize(Integer.MIN_VALUE);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	    System.exit(1);
@@ -74,9 +75,10 @@ public class Connector {
 
     public PreparedStatement getNewPreparedStatement(String str) {
 	try {
-	    pstmt = conn.prepareStatement(str, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	    pstmt.setFetchSize(Integer.MIN_VALUE);  
-	    pstmt.setFetchDirection(ResultSet.FETCH_REVERSE);
+	    //pstmt = conn.prepareStatement(str, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		pstmt = conn.prepareStatement(str);
+		//pstmt.setFetchSize(Integer.MIN_VALUE);  
+	   // pstmt.setFetchDirection(ResultSet.FETCH_REVERSE);
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	    System.exit(1);

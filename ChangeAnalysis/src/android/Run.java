@@ -109,6 +109,8 @@ public class Run {
 		if(args[0].equalsIgnoreCase("select-predictors")){
 			String fp_sourceDir = userDir + "\\output\\firstLRforPredictors\\";
 			String lr_sourceDir = userDir + "\\output\\secondLRforResults\\";
+			String initCutoffTable = "cutoff_all";
+			//String predictCufoff = "cutoff_predict";
 			if(args[1].equalsIgnoreCase("-f")){
 				predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
 				System.out.println("Select predictors from CLE results: "+predictors);
@@ -116,12 +118,18 @@ public class Run {
 
 			if(args[1].equalsIgnoreCase("-s")){
 				equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
-				String initCutoffTable = "cutoff_all";
-				//PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
 				
+				PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
+			}
+			if(args[1].equalsIgnoreCase("-a")){
 				PredictByLR.selectFinalCufoffs(numTags,startVersion,initCutoffTable,"cutoff_final");
 			}
-
+			
+			//table 'cutoff_predict' must be prepared in db
+			if(args[1].equalsIgnoreCase("-p")){
+				String outputFile = userDir + "\\output\\final-version-predictions.txt";
+				PredictByLR.predictFinalVersion(0.04,numTags,lr_sourceDir,outputFile,changeTableName);
+			}
 		}
 	}
 

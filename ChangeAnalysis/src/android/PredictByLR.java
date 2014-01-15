@@ -1,8 +1,11 @@
 package android;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -317,7 +320,7 @@ public class PredictByLR {
 		
 		cutoffTable = new double[times][4]; //tt,ff,tf,ft
 		
-		for(int i = startVersion; i < numTags-1; i++ ){
+		for(int i = startVersion; i < numTags; i++ ){
 			tablename = i+"_"+(i+1);
 			if(p_debug)
 				System.out.println("Now work on: "+tablename);
@@ -328,7 +331,7 @@ public class PredictByLR {
 			while(rs.next()){
 				if(p_debug){
 					int id = rs.getInt("id");
-					System.out.println("\t scaning "+id);
+					System.out.println("\t "+tablename+": scaning "+id);
 				}
 				
 				for(String attr:predictors){
@@ -339,6 +342,8 @@ public class PredictByLR {
 				logis = eq.getLRProbability();
 				
 				actual = rs.getDouble("actual_change");//Todo
+				rs.updateDouble("logistic", logis);
+				rs.updateRow();
 				
 				for(int time = 1; time < times; time++ ){
 					cutoff = c_range * time;
@@ -380,9 +385,8 @@ public class PredictByLR {
 					System.out.println(preStmt.toString());
 				preStmt.executeUpdate();
 			}
-			
 		}
-		
+		c.close();
 	}
 
 	public static List<LREquation> getLREquationsFromCLEResults(
@@ -390,7 +394,7 @@ public class PredictByLR {
 		ArrayList<LREquation> equations = new ArrayList<LREquation>();
 		String filePath;
 		LREquation eq;
-		for (int i = startVersion; i < numTags - 1; i++) {
+		for (int i = startVersion; i < numTags ; i++) {
 			filePath = sourceDir + i + "-model.txt";
 			eq = readEquation(filePath);
 			equations.add(eq);
@@ -438,10 +442,58 @@ public class PredictByLR {
 					System.out.println(preStmt.toString());
 				
 				preStmt.executeUpdate();
+				preStmt.close();
+			}
+			rs.close();
+		}
+	}
+
+	public static void predictFinalVersion(double cutoff, int numTags, String lr_sourceDir,
+			String outputFile,String changeTableName) throws IOException, SQLException {
+		
+		Connector c = new Connector();
+		Statement stmt = c.getNewStatement();
+		Statement stmt2 = c.getNewStatement();
+		ResultSet rs,rs2;
+		
+		StringBuffer predictions = new StringBuffer();
+		String input = lr_sourceDir+(numTags-1)+"-model.txt";
+		LREquation eq = readEquation(input);
+		if(p_debug){
+			System.out.println("Reading equation from "+input);
+			System.out.println("Equation = "+eq);
+		}
+		rs = stmt.executeQuery("select * from "+(numTags-1)+"_"+numTags);
+		int sum = 0;
+		while(rs.next()){
+			for(String attr: eq.getVariables()){
+				Double value = rs.getDouble(attr);
+				eq.addVariableValue(attr, value);
+			}
+			double logis = eq.getLRProbability();
+			rs.updateDouble("logistic", logis);
+			
+			if(logis>=cutoff){
+				rs.updateDouble("predict_change", 1);
+				rs.updateRow();	
+				rs2 = stmt2.executeQuery("select name from "+changeTableName+" where id="+rs.getInt("id"));
+				if(rs2.next()){
+					predictions.append(rs2.getString("name")+"\n");
+					sum++;
+				}
 			}
 		}
 		
+		c.close();
 		
+		predictions.append("Count: "+sum);
+		File file = new File(outputFile);
+		if (file.exists())
+		    file.delete();
+		file.createNewFile();
+		BufferedWriter output = new BufferedWriter(new FileWriter(file));
+		output.write(predictions.toString());
+		output.close();
 	}
 
 }
