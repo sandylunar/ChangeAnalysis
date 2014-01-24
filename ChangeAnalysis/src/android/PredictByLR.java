@@ -3,7 +3,6 @@ package android;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,7 +26,6 @@ import weka.core.Instances;
 import weka.core.Utils;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 import weka.filters.unsupervised.attribute.Remove;
 import database.Connector;
@@ -412,10 +409,13 @@ public class PredictByLR {
 		Statement stmt = c.getNewStatement();
 		ResultSet rs;
 		
-		double f_threshold = 0.5;
+		double f_threshold = 0.45;
+		
+		String cutoffTablename = finalCutoffTable+"_"+f_threshold;
+		cutoffTablename = cutoffTablename.replace('.', '_');
 		
 		String createSQL = "create table if not exists "
-				+ finalCutoffTable
+				+ cutoffTablename
 				+ "(id int primary key AUTO_INCREMENT, model varchar(10), cutoff double(8,4), m_precision double(20,4), recall double(20,4), positive double(20,4),f_measure double(20,4))";		
 		
 		if(p_debug)
@@ -429,7 +429,7 @@ public class PredictByLR {
 			
 			rs = stmt.executeQuery("select * from "+initCutoffTable+" where f_measure = (select max(f_measure) from "+initCutoffTable+ " where model='"+tablename+"' and positive < +"+f_threshold+")");
 			while(rs.next()){
-				String insertPreSQL = "insert into "+ finalCutoffTable+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
+				String insertPreSQL = "insert into "+ cutoffTablename+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
 
 				PreparedStatement preStmt = c.getNewPreparedStatement(insertPreSQL);
 				preStmt.setString(1, tablename);
