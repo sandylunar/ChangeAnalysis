@@ -216,6 +216,9 @@ public class PredictByLR {
 
 		for (int i = startVersion; i < numTags - 1; i++) {
 			filePath = sourceDir + i + "-model.txt";
+			File dir = new File(filePath);
+			if(!dir.exists())
+				continue;
 
 			eq = readEquation(filePath);
 			if (p_debug)
@@ -393,6 +396,11 @@ public class PredictByLR {
 		LREquation eq;
 		for (int i = startVersion; i < numTags ; i++) {
 			filePath = sourceDir + i + "-model.txt";
+			File dir = new File(filePath);
+			if(!dir.exists()){
+				equations.add(new LREquation());
+				continue;
+			}
 			eq = readEquation(filePath);
 			equations.add(eq);
 			if (p_debug)

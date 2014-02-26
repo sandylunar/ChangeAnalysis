@@ -107,8 +107,8 @@ public class Run {
 			PrepareRawData.assembleAllForCle("dataset_all",numTags);
 		}
 		if(args[0].equalsIgnoreCase("select-predictors")){
-			String fp_sourceDir = userDir + "\\output\\firstLRforPredictors\\";
-			String lr_sourceDir = userDir + "\\output\\secondLRforResults\\";
+			String fp_sourceDir = userDir + "\\output\\thirdLRforResults\\";
+			String lr_sourceDir = userDir + "\\output\\fourthLRforResults\\";
 			String initCutoffTable = "cutoff_all";
 			//String predictCufoff = "cutoff_predict";
 			if(args[1].equalsIgnoreCase("-f")){

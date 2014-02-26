@@ -60,4 +60,11 @@ class LREquation{
 	public String toString(){
 		return "interpret = "+ interpret+"; elements = "+elements.toString()+"\t Inputs = "+inputs.toString();
 	}
+	
+	public boolean isNull(){
+		if(elements.size()==0)
+			return true;
+		else 
+			return false;
+	}
 }
