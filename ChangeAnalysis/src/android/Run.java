@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import database.RecoveryFromTheLastTable;
+
 public class Run {
 	
 	public static int numTags;
@@ -130,6 +132,13 @@ public class Run {
 				String outputFile = userDir + "\\output\\final-version-predictions-single.txt";
 				PredictByLR.predictFinalVersion(0.04,numTags,lr_sourceDir,outputFile,changeTableName);
 			}
+		}
+		if(args[0].equalsIgnoreCase("recovery")){
+			//recovery from the last table to make descriptive statistic
+			//transform: freq*33, seq*32, distance/(freq*33),recency,lifecycle,id,predict
+			String targetTableName = "32_33";
+			String outputTableName = "32_33_recovery";
+			RecoveryFromTheLastTable.recovery(targetTableName,outputTableName);
 		}
 	}
 
