@@ -1,0 +1,16 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   21.91 * frequency + 
+   -0.03893 * distance + 
+   -0.03177 * lifecycle + 
+   -6.474 * sequence + 
+   -0.05892 * occurrence + 
+   0.548 * pakvolality_cum + 
+   + -1.454
+

@@ -319,12 +319,19 @@ public class PredictByLR {
 		}
 		
 		cutoffTable = new double[times][4]; //tt,ff,tf,ft
+		if(p_debug){
+			System.out.println("The number of equations is : "+equations.size());}
 		
 		for(int i = startVersion; i < numTags; i++ ){
 			tablename = i+"_"+(i+1);
 			if(p_debug)
 				System.out.println("Now work on: "+tablename);
+				
 			eq = equations.get(i-startVersion);
+			if(p_debug)
+				System.out.println(eq);
+			if(eq.isNull())
+				continue;
 			predictors = eq.getVariables();
 			
 			rs = stmt.executeQuery("select * from "+tablename);
@@ -417,42 +424,42 @@ public class PredictByLR {
 		Statement stmt = c.getNewStatement();
 		ResultSet rs;
 		
-		double f_threshold = 0.45;
-		
-		String cutoffTablename = finalCutoffTable+"_"+f_threshold;
-		cutoffTablename = cutoffTablename.replace('.', '_');
-		
-		String createSQL = "create table if not exists "
-				+ cutoffTablename
-				+ "(id int primary key AUTO_INCREMENT, model varchar(10), cutoff double(8,4), m_precision double(20,4), recall double(20,4), positive double(20,4),f_measure double(20,4))";		
-		
-		if(p_debug)
-			System.out.println(createSQL);
-		
-		stmt.executeUpdate(createSQL);
-		
-		for(int i = startVersion; i<numTags-1;i++){
-			tablename = i+"_"+(i+1);
-
+		for(double f_threshold=0.45; f_threshold<=0.5; f_threshold+=0.05){
+			String cutoffTablename = finalCutoffTable+"_"+f_threshold;
+			cutoffTablename = cutoffTablename.replace('.', '_');
 			
-			rs = stmt.executeQuery("select * from "+initCutoffTable+" where f_measure = (select max(f_measure) from "+initCutoffTable+ " where model='"+tablename+"' and positive < +"+f_threshold+")");
-			while(rs.next()){
-				String insertPreSQL = "insert into "+ cutoffTablename+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
+			String createSQL = "create table if not exists "
+					+ cutoffTablename
+					+ "(id int primary key AUTO_INCREMENT, model varchar(10), cutoff double(8,4), m_precision double(20,4), recall double(20,4), positive double(20,4),f_measure double(20,4))";		
+			
+			if(p_debug)
+				System.out.println(createSQL);
+			
+			stmt.executeUpdate(createSQL);
+			
+			for(int i = startVersion; i<numTags-1;i++){
+				tablename = i+"_"+(i+1);
 
-				PreparedStatement preStmt = c.getNewPreparedStatement(insertPreSQL);
-				preStmt.setString(1, tablename);
-				preStmt.setDouble(2, rs.getDouble("cutoff"));
-				preStmt.setDouble(3, rs.getDouble("m_precision"));
-				preStmt.setDouble(4, rs.getDouble("recall"));
-				preStmt.setDouble(5, rs.getDouble("positive"));
-				preStmt.setDouble(6,rs.getDouble("f_measure"));
-				if(p_debug)
-					System.out.println(preStmt.toString());
 				
-				preStmt.executeUpdate();
-				preStmt.close();
+				rs = stmt.executeQuery("select * from "+initCutoffTable+" where f_measure = (select max(f_measure) from "+initCutoffTable+ " where model='"+tablename+"' and positive < +"+f_threshold+")");
+				while(rs.next()){
+					String insertPreSQL = "insert into "+ cutoffTablename+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
+
+					PreparedStatement preStmt = c.getNewPreparedStatement(insertPreSQL);
+					preStmt.setString(1, tablename);
+					preStmt.setDouble(2, rs.getDouble("cutoff"));
+					preStmt.setDouble(3, rs.getDouble("m_precision"));
+					preStmt.setDouble(4, rs.getDouble("recall"));
+					preStmt.setDouble(5, rs.getDouble("positive"));
+					preStmt.setDouble(6,rs.getDouble("f_measure"));
+					if(p_debug)
+						System.out.println(preStmt.toString());
+					
+					preStmt.executeUpdate();
+					preStmt.close();
+				}
+				rs.close();
 			}
-			rs.close();
 		}
 	}
 
@@ -501,6 +508,9 @@ public class PredictByLR {
 		file.createNewFile();
 		BufferedWriter output = new BufferedWriter(new FileWriter(file));
 		output.write(predictions.toString());
+		if(p_debug){
+			System.out.println("Write to file: "+outputFile);
+		}
 		output.close();
 	}
 
