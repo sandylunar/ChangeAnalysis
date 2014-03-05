@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.RecoveryFromTheLastTable;
+import database.RecoveryAndUpdate;
 
 public class Run {
 	
@@ -30,7 +30,12 @@ public class Run {
 		numTags = tags.size();
 		startVersion = 1;
 
-		if (args[0].equalsIgnoreCase("prepare-raw-data")) {
+		/*
+		 * Step 1
+		 * input: tags
+		 * output: bat, git-diff to txt
+		 */
+		if (args[0].equalsIgnoreCase("prepare-git-diff")) {
 			System.out.println("1. Reading tags...");
 
 			System.out.println("Tags are: \n" + tags.toString());
@@ -46,6 +51,11 @@ public class Run {
 			}
 		}
 
+		/*
+		 * Step 2
+		 * input: tags,git-diff in txt format
+		 * output: Tables>android_tags,change_history
+		 */
 		if (args[0].equalsIgnoreCase("dump-raw-data")) {
 			// 将txt存入数据库
 			try {
@@ -138,7 +148,13 @@ public class Run {
 			//transform: freq*33, seq*32, distance/(freq*33),recency,lifecycle,id,predict
 			String targetTableName = "32_33";
 			String outputTableName = "32_33_recovery";
-			RecoveryFromTheLastTable.recovery(targetTableName,outputTableName);
+			RecoveryAndUpdate.recoveryFromTheLastTable(targetTableName,outputTableName);
+		}
+		
+		if(args[0].equalsIgnoreCase("update-new-database")){
+			//update the change_history table to filter source code
+			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
+			RecoveryAndUpdate.filterDataToNewDB(changeTableName,includeTypes);
 		}
 	}
 

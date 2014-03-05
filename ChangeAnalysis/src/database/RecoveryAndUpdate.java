@@ -5,11 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class RecoveryFromTheLastTable {
+public class RecoveryAndUpdate {
 	
 	
 
-	public static void recovery(String targetTableName, String outputTableName) throws SQLException {
+	private static final boolean p_debug = true;
+
+	public static void recoveryFromTheLastTable(String targetTableName, String outputTableName) throws SQLException {
 
 		Connector c = new Connector();
 		ResultSet rs;
@@ -55,6 +57,38 @@ public class RecoveryFromTheLastTable {
 		
 		
 		
+	}
+
+	public static void filterDataToNewDB(String changeTableName, String[] includeTypes) throws SQLException {
+		
+		Connector c = new Connector("jdbc:mysql://localhost:3306/android_frameworks_new","root","123456");
+		Statement statement = c.getNewStatement();
+		String selectSQL = "select * from " + changeTableName;
+
+		ResultSet rs = statement.executeQuery(selectSQL);
+		while (rs.next()) {
+			String filename = rs.getString("name");
+			if(!includeTypes(filename,includeTypes)){
+				rs.deleteRow();
+				if(p_debug){
+					System.out.println("Delete "+rs.getInt("id")+", "+filename);
+				}
+			}
+		}
+	}
+
+	private static boolean includeTypes(String filename, String[] includeTypes) {
+		int dotLoc = filename.lastIndexOf('.');
+		if(dotLoc<0)
+			return false;
+		String type = filename.substring(dotLoc);
+		
+		for(String s : includeTypes){
+			if(s.equalsIgnoreCase(type))
+				return true;
+		}
+		
+		return false;
 	}
 
 }

@@ -7,10 +7,8 @@ android-2.1_r1
 android-2.2_r1
 android-2.2.1_r1
 android-2.2.2_r1
-android-2.2.3_r1
 android-2.3_r1
 android-2.3.1_r1
-android-2.3.2_r1
 android-2.3.3_r1
 android-2.3.4_r1
 android-2.3.5_r1
@@ -30,4 +28,3 @@ android-4.3_r1
 android-4.3.1_r1
 android-4.4_r1
 android-4.4.1_r1
-android-4.4.2_r1

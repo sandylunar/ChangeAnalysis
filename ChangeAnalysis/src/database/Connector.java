@@ -18,7 +18,7 @@ import java.sql.Statement;
  */
 public class Connector {
 
-    private String driverClass;
+    private String driverClass = "com.mysql.jdbc.Driver";;
     private static String url;
     private static String user;
     private static String pwd;
@@ -29,17 +29,17 @@ public class Connector {
 
     /** Creates a new instance of Connector */
     public Connector() {
-	driverClass = "com.mysql.jdbc.Driver";
-	setUrl("jdbc:mysql://localhost:3306/android_frameworks_base");
+	setUrl("jdbc:mysql://localhost:3306/android_frameworks_new");
 	setUser("root");
 	setPwd("123456");
 	conn = getNewConnection();
     }
-
+    
     public Connector(String url, String user, String pwd) {
-	this.setUrl(url);
-	this.setUser(user);
-	this.setPwd(pwd);
+	Connector.setUrl(url);
+	Connector.setUser(user);
+	Connector.setPwd(pwd);
+	conn = getNewConnection();
     }
 
     public Connection getNewConnection() {

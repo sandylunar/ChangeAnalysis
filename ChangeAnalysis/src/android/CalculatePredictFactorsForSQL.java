@@ -133,25 +133,22 @@ public class CalculatePredictFactorsForSQL {
 		rs = statement.executeQuery(query);
 		if (rs.next()) {
 			int value;
+			double sumDis = 0;
+			double frequence = 0;
 			for (int prev = BEGIN; prev <= currColumn; prev++) {
 				value = rs.getInt(prev);
 				// 计算freq, occur
 				// Cell中的值为1或者2时，Freq++， Occur++
 				if (value == 1 || value == 2) {// ||grid. getContents().equals("2")
-					Double d = freq.get(id);
-
-					if (d == null)
-						d = 0.0;
-					d++;
-					freq.put(id, d);
-
-					Double tmp = distance.get(id);
-					if (tmp == null)
-						tmp = 0.0;
-
-					distance.put(id, tmp + currColumn - prev);
+					frequence++;
+					sumDis += currColumn - prev;
 				}
 			}
+			freq.put(id, frequence);
+			if(frequence!=0)
+				distance.put(id, sumDis/frequence);
+			else 
+				distance.put(id, 0.0);
 		}rs.close();
 	}
 
@@ -263,7 +260,7 @@ public class CalculatePredictFactorsForSQL {
 		c = new Connector();
 		statement = c.getNewStatement();
 		BEGIN = 3; // V1的列
-		END = 34; // Vmax的列
+		END = 31; // Vmax的列
 		OFFSET = 0; // 从V1+offset+1开始，计算model，所以一共会产生Vmax-V1-offset个model
 
 		// static final int[] numberOfUC =
@@ -341,7 +338,11 @@ public class CalculatePredictFactorsForSQL {
 
 	private void occurrence(Integer id) {
 		if (freq.get(id) != null) {
-			occurence.put(id, distance.get(id) / (freq.get(id) * life.get(id)));
+			double value = freq.get(id) * life.get(id);
+			if(value!=0)
+				occurence.put(id, distance.get(id) / value);
+			else
+				occurence.put(id,0.0);
 		}
 	}
 
@@ -354,7 +355,8 @@ public class CalculatePredictFactorsForSQL {
 		boolean isDel = false;
 		boolean isAdd = false;
 
-		for (int currColumn = 29; currColumn <= END; currColumn++) {
+		//TODO start from 3/BEGIN to 31,finish 16
+		for (int currColumn = 4; currColumn <= END; currColumn++) {
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -388,7 +390,7 @@ public class CalculatePredictFactorsForSQL {
 					// 计算当前版本的连续变更的次数
 					seqAndRecency(currColumn, fileID);
 					freqAndDistance(fileID, currColumn);
-					normalize(currColumn, fileID);
+					//normalize(currColumn, fileID);
 					occurrence(fileID);
 					actualChange(currColumn, fileID);
 					readVolatility(new Integer(fileID), currColumn);
@@ -510,7 +512,7 @@ public class CalculatePredictFactorsForSQL {
 			}
 			rs.close();
 		}
-		return (value*(currColumn-2-BEGIN)+single)/(currColumn-1-BEGIN);
+		return (value*(currColumn-BEGIN)+single)/(currColumn-BEGIN+1);
 	}
 
 	void readVolatility(Sheet srcSheet) {
@@ -639,7 +641,8 @@ public class CalculatePredictFactorsForSQL {
 		if (currColumn == 2)
 			seq.put(fileID, 0.0);
 		else
-			seq.put(fileID, sequence / (currColumn - 2.0));
+			seq.put(fileID, sequence+0.0);
+			//seq.put(fileID, sequence / (currColumn - 2.0));
 		lastDistance.put(fileID, currColumn - lastChange + 0.0);
 
 	}
