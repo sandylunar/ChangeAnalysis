@@ -79,9 +79,14 @@ public class RecoveryAndUpdate {
 
 	private static boolean includeTypes(String filename, String[] includeTypes) {
 		int dotLoc = filename.lastIndexOf('.');
-		if(dotLoc<0)
-			return false;
-		String type = filename.substring(dotLoc);
+		String type = null;
+		if(dotLoc<0){
+			int splashLoc = filename.lastIndexOf('/');
+			if(splashLoc<0)
+				return false;
+			type = filename.substring(dotLoc+1);
+		}
+		type = filename.substring(dotLoc);
 		
 		for(String s : includeTypes){
 			if(s.equalsIgnoreCase(type))

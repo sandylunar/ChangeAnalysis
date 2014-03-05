@@ -355,7 +355,7 @@ public class CalculatePredictFactorsForSQL {
 		boolean isDel = false;
 		boolean isAdd = false;
 
-		//TODO start from 3/BEGIN to 31,finish 16
+		//TODO start from 3/BEGIN to 31,finish 27
 		for (int currColumn = 4; currColumn <= END; currColumn++) {
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
