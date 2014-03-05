@@ -61,7 +61,7 @@ public class RecoveryAndUpdate {
 
 	public static void filterDataToNewDB(String changeTableName, String[] includeTypes) throws SQLException {
 		
-		Connector c = new Connector("jdbc:mysql://localhost:3306/android_frameworks_new","root","123456");
+		Connector c = new Connector();
 		Statement statement = c.getNewStatement();
 		String selectSQL = "select * from " + changeTableName;
 
@@ -86,7 +86,8 @@ public class RecoveryAndUpdate {
 				return false;
 			type = filename.substring(dotLoc+1);
 		}
-		type = filename.substring(dotLoc);
+		else
+			type = filename.substring(dotLoc);
 		
 		for(String s : includeTypes){
 			if(s.equalsIgnoreCase(type))

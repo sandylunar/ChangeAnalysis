@@ -356,7 +356,7 @@ public class CalculatePredictFactorsForSQL {
 		boolean isAdd = false;
 
 		//TODO start from 3/BEGIN to 31,finish 27
-		for (int currColumn = 4; currColumn <= END; currColumn++) {
+		for (int currColumn = 3; currColumn <= 3; currColumn++) {
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -372,7 +372,12 @@ public class CalculatePredictFactorsForSQL {
 			System.out
 					.println("Working on Lifecycle, Sequency, Recency, Frequency, Distance, Occurrence, and actual_changes");
 			
-			for (int fileID = 1; fileID < rows; fileID++) {
+			String query = "select id from "+changeTableName;
+			Statement statementIDs = c.getNewStatement();
+			ResultSet rsIDs = statementIDs.executeQuery(query);
+			while(rsIDs.next()){
+				int fileID = rsIDs.getInt("id");
+				
 				if (fileID % 1000 == 0)
 					System.out.println(" " + fileID);
 				isFirst = true;
@@ -395,8 +400,11 @@ public class CalculatePredictFactorsForSQL {
 					actualChange(currColumn, fileID);
 					readVolatility(new Integer(fileID), currColumn);
 				}
+				
 			}
-
+			rsIDs.close();
+			statementIDs.close();
+			
 			System.out.println("Working on single and average PackageVolality");
 
 			// Êä³ö

@@ -29,7 +29,7 @@ public class Connector {
 
     /** Creates a new instance of Connector */
     public Connector() {
-	setUrl("jdbc:mysql://localhost:3306/android_frameworks_new");
+	setUrl("jdbc:mysql://localhost:3306/android_frameworks_two");
 	setUser("root");
 	setPwd("123456");
 	conn = getNewConnection();

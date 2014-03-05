@@ -153,8 +153,8 @@ public class Run {
 		
 		if(args[0].equalsIgnoreCase("update-new-database")){
 			//update the change_history table to filter source code
-			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
-			String[] includeTypes2 = {".c",".cpp",".h",".cs",".java",".js",".conf",".xml",".txt",".properties","bat","notice","readme","makefile"};
+			//String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
+			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js",".conf",".xml",".txt",".properties","bat","notice","readme","makefile"};
 			RecoveryAndUpdate.filterDataToNewDB(changeTableName,includeTypes);
 		}
 	}
