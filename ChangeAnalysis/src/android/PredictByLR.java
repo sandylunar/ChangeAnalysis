@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -207,6 +208,8 @@ public class PredictByLR {
 
 	public static List<String> selectParametersFromCLEResults(String sourceDir,
 			int numTags, int startVersion) throws IOException {
+		 PrintWriter pw = new PrintWriter(new FileWriter(new File(sourceDir+"predictors-stat.txt")));  
+		 
 		double threshold = (numTags - startVersion - 1) / 2;
 		String filePath = null;
 		LREquation eq;
@@ -223,6 +226,8 @@ public class PredictByLR {
 			eq = readEquation(filePath);
 			if (p_debug)
 				System.out.println("Processing " + filePath + " - " + eq);
+			pw.println(filePath + " - " + eq);
+			
 			predictors = eq.getVariables();
 
 			for (String variable : predictors) {
@@ -242,9 +247,12 @@ public class PredictByLR {
 				selectedPredictors.add(entry.getKey());
 				if (p_debug)
 					System.out.println(entry.getKey() + ":" + entry.getValue());
+				pw.println(entry.getKey() + ":" + entry.getValue());
 			}
 		}
 
+		pw.println("Select predictors from CLE results: "+selectedPredictors);
+		pw.close();
 		return selectedPredictors;
 	}
 
@@ -424,7 +432,8 @@ public class PredictByLR {
 		Statement stmt = c.getNewStatement();
 		ResultSet rs;
 		
-		for(double f_threshold=0.45; f_threshold<=0.5; f_threshold+=0.05){
+		//TODO 0.05-0.5
+		for(double f_threshold=0.05; f_threshold<=0.5; f_threshold+=0.05){
 			String cutoffTablename = finalCutoffTable+"_"+f_threshold;
 			cutoffTablename = cutoffTablename.replace('.', '_');
 			
@@ -472,7 +481,13 @@ public class PredictByLR {
 		ResultSet rs,rs2;
 		
 		StringBuffer predictions = new StringBuffer();
-		String input = lr_sourceDir+(numTags-1)+"-model.txt";
+		String input = "";
+		for(int i = numTags-1; i>0;i--){
+			input = lr_sourceDir+i+"-model.txt";
+			File file = new File(input);
+			if(file.exists())
+				break;
+		}
 		LREquation eq = readEquation(input);
 		if(p_debug){
 			System.out.println("Reading equation from "+input);
@@ -514,4 +529,42 @@ public class PredictByLR {
 		output.close();
 	}
 
+	public static void filterFinalCutoffs(int numTags, int startVersion,String finalCutoffTable) throws SQLException {
+			String tablename;
+			Connector c = new Connector();
+			Statement stmt = c.getNewStatement();
+			ResultSet rs;
+			
+			for(double f_threshold=0.05; f_threshold<=0.5; f_threshold+=0.05){
+				String cutoffTablename = finalCutoffTable+"_"+f_threshold;
+				cutoffTablename = cutoffTablename.replace('.', '_');
+				String query = "";
+				
+				for(int i = startVersion; i<numTags-1;i++){
+					tablename = i+"_"+(i+1);
+					
+					rs = stmt.executeQuery("select count(*) as rowCount from "+cutoffTablename+" where model = '"+tablename+"'");
+		            rs.next();
+		            int rowCount = rs.getInt("rowCount");
+		            if(rowCount>1){
+		            	if(f_threshold<=0.25){
+		            		query = "select * from "+cutoffTablename+" where model = '"+tablename+"' order by recall desc, positive" ;
+	            		}else{
+		            		query = "select * from "+cutoffTablename+" where model = '"+tablename+"' order by m_precision desc, positive" ;
+	            		}
+		            	
+	            		rs = stmt.executeQuery(query);
+		            	rs.first();
+	            		while(rs.next()){
+		            		rs.deleteRow();
+		            		if(p_debug){
+		    					System.out.println("Delete "+rs.getInt("id"));
+		    				}
+		            	}
+		            }
+				}
+				
+			}
+			c.close();
+	}
 }

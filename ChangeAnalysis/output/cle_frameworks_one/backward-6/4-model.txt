@@ -1,0 +1,13 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   1.57 * frequency + 
+   -0.7759 * distance + 
+   -0.35 * lifecycle + 
+   + -3.55
+

@@ -1,0 +1,14 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   1.218 * frequency + 
+   -0.8152 * distance + 
+   1.738 * occurrence + 
+   -0.6747 * recency + 
+   + -3.863
+

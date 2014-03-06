@@ -155,16 +155,16 @@ public class PrepareRawData {
 	c.close();
     }
 
-	public static void addColumnDataset(int size) throws SQLException {
+	public static void alterTableColumnDataset(int size) throws SQLException {
 		Connector c = new Connector();
 		Statement stmt = c.getNewStatement();
 		for(int i = 1; i < size-1; i++){
 			String tablename = i+"_"+(i+1);
-			String alter = "alter table "+tablename+" drop column dataset";
-			System.out.println(i+": "+alter);
-			stmt.executeUpdate(alter);
+			//String alter = "alter table "+tablename+" drop column dataset";
+			//System.out.println(i+": "+alter);
+			//stmt.executeUpdate(alter);
 			
-			alter = "alter table "+tablename+" add dataset int(5) default "+i;
+			String alter = "alter table "+tablename+" add dataset int(5) default "+i;
 			System.out.println(i+": "+alter);
 			stmt.executeUpdate(alter);
 			

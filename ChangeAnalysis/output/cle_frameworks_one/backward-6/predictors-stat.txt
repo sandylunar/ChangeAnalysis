@@ -1,0 +1,34 @@
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\1-model.txt - interpret = -1.874; elements = {lifecycle=0.5341, frequency=1.593, pakvolality_cum=-2.554}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\2-model.txt - interpret = -2.612; elements = {distance=2.795, occurrence=-9.065, frequency=0.9587, pakvolality_cum=1.764}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\3-model.txt - interpret = -2.046; elements = {sequence=-0.5185, lifecycle=-0.6587, occurrence=-2.038, frequency=1.803}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\4-model.txt - interpret = -3.55; elements = {distance=-0.7759, lifecycle=-0.35, frequency=1.57}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\5-model.txt - interpret = -3.839; elements = {distance=-0.421, occurrence=0.6812, frequency=1.117, pakvolality_cum=7.521}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\6-model.txt - interpret = -10.89; elements = {occurrence=-3.288, frequency=0.6514, pakvolality_cum=12.05}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\7-model.txt - interpret = -4.545; elements = {distance=2.321, occurrence=-27.82, pakvolality_cum=-19.59}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\8-model.txt - interpret = -3.531; elements = {distance=0.1696, sequence=-0.1236, lifecycle=-0.1032, occurrence=-1.661, frequency=0.6273, pakvolality_cum=6.913}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\9-model.txt - interpret = -11.05; elements = {frequency=1.008}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\10-model.txt - interpret = -1.261; elements = {lifecycle=-0.3875, occurrence=-3.943, frequency=0.6991, pakvolality_cum=3.379}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\11-model.txt - interpret = -0.4683; elements = {lifecycle=-0.2846, occurrence=-5.411, frequency=0.3801}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\12-model.txt - interpret = -3.016; elements = {lifecycle=-0.2466, occurrence=-3.858, frequency=0.405, pakvolality_cum=5.838}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\13-model.txt - interpret = -2.452; elements = {distance=0.5974, lifecycle=-0.3601, occurrence=-15.64}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\14-model.txt - interpret = 201.4; elements = {distance=-0.09054, sequence=42.32, lifecycle=-4.916, occurrence=-99.88, frequency=-51.15, pakvolality_cum=-1075.0}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\15-model.txt - interpret = -1.531; elements = {distance=-0.05266, occurrence=-1.681, frequency=0.6736, pakvolality_cum=4.721}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\16-model.txt - interpret = -1.916; elements = {distance=-0.1178, sequence=0.3044, lifecycle=-0.01838, occurrence=-0.3686, frequency=0.754, pakvolality_cum=2.97}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\17-model.txt - interpret = -7.654; elements = {distance=-0.1851, sequence=0.9195, occurrence=-3.22, frequency=0.4648, pakvolality_cum=7.061}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\18-model.txt - interpret = -3.016; elements = {distance=-0.09548, sequence=0.4995, lifecycle=-0.08514, occurrence=-2.087, frequency=0.4199, pakvolality_cum=4.904}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\19-model.txt - interpret = -3.619; elements = {sequence=0.3602, lifecycle=-0.1165, occurrence=-2.561, frequency=0.342, pakvolality_cum=3.464}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\20-model.txt - interpret = -1.924; elements = {distance=-0.06287, sequence=0.133, lifecycle=-0.02026, occurrence=-1.529, frequency=0.3171, pakvolality_cum=6.28}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\21-model.txt - interpret = -5.134; elements = {occurrence=-2.024, frequency=0.2458, pakvolality_cum=5.816}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\22-model.txt - interpret = -2.738; elements = {lifecycle=-0.05964, occurrence=-2.193, frequency=0.3146, pakvolality_cum=10.63}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\23-model.txt - interpret = -10.58; elements = {frequency=0.5075}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\24-model.txt - interpret = -5.182; elements = {distance=-0.1969, frequency=0.4592, pakvolality_cum=9.758}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\25-model.txt - interpret = -1.381; elements = {lifecycle=-0.07715, occurrence=-1.555, frequency=0.3871, pakvolality_cum=5.09}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\26-model.txt - interpret = -4.298; elements = {distance=-0.1309, sequence=0.813, frequency=0.2317}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\27-model.txt - interpret = -2.716; elements = {distance=-0.09722, occurrence=-1.35, frequency=0.3492, pakvolality_cum=10.31}	 Inputs = {}
+C:\Users\myhome\git\ChangeAnalysis\ChangeAnalysis\output\cle_frameworks_one\backward-6\28-model.txt - interpret = -3.597; elements = {lifecycle=-0.0825, occurrence=-5.802, frequency=0.2776, pakvolality_cum=7.771}	 Inputs = {}
+distance:15
+lifecycle:16
+occurrence:22
+frequency:26
+pakvolality_cum:21
+Select predictors from CLE results: [distance, lifecycle, occurrence, frequency, pakvolality_cum]

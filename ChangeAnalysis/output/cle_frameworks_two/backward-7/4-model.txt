@@ -1,0 +1,12 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   0.7638 * sequence + 
+   -1.214 * recency + 
+   + -3.148
+

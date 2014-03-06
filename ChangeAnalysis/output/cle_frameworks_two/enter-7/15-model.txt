@@ -1,0 +1,14 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   -0.04531 * lifecycle + 
+   -2.172 * occurrence + 
+   0.3787 * pakvolality_cum + 
+   0.518 * frequency + 
+   + -0.2262
+

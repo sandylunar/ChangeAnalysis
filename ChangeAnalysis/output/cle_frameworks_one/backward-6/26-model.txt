@@ -1,0 +1,13 @@
+
+  Equation For 0
+
+   + 0.00000000000000000000
+
+
+  Equation For 1
+
+   0.2317 * frequency + 
+   -0.1309 * distance + 
+   0.813 * sequence + 
+   + -4.298
+

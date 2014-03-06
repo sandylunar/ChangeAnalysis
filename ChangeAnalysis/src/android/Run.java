@@ -26,6 +26,7 @@ public class Run {
 		String tagPath = userDir + "/data/tag-frameworks-trim.txt";
 		String changeTableName = "change_history";
 		String tagTableName = "android_tags";
+		String datasetAll = "dataset_all";
 		ArrayList<String> tags = PrepareRawData.readTags(tagPath);
 		numTags = tags.size();
 		startVersion = 1;
@@ -79,7 +80,7 @@ public class Run {
 			}
 		}
 
-		if (args[0].equalsIgnoreCase("predict-lr")) {
+		/*if (args[0].equalsIgnoreCase("predict-lr")) {
 			if (args.length < 3) {
 				System.err.println("Please input other parameters");
 				return;
@@ -109,40 +110,62 @@ public class Run {
 			System.out.println("Seleted parameters are at columns(start from 0): "+parameters.toString());
 			//predictor.runForLRModels(parameters);
 			//predictor.selectCutoffs();
+		}*/
+		
+		if(args[0].equalsIgnoreCase("add-dataset-assemble")){
+			PrepareRawData.alterTableColumnDataset(numTags);
+			PrepareRawData.assembleAllForCle(datasetAll,numTags);
+			System.out.println("Done...");
 		}
 		
-		if(args[0].equalsIgnoreCase("add-column-dataset")){
-			PrepareRawData.addColumnDataset(numTags);
+		/**
+		 * ChangeAnalysis done, next need Clementine 12 to the job: 
+		 * input: dataset_all
+		 * output: backward stepwise models
+		 */
+		
+		/*
+		 * Input: backward models
+		 * output: predictors
+		 */
+		if(args[0].equalsIgnoreCase("select-predictors-from-backwards")){
+			String fp_sourceDir = userDir + "\\output\\cle_frameworks_two\\backward-6\\";
+			predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
+			System.out.println("Select predictors from CLE results: "+predictors);
 		}
 		
-		if(args[0].equalsIgnoreCase("assemble-all-cle")){
-			PrepareRawData.assembleAllForCle("dataset_all",numTags);
-		}
-		if(args[0].equalsIgnoreCase("select-predictors")){
-			String fp_sourceDir = userDir + "\\output\\thirdLRforResults\\";
-			String lr_sourceDir = userDir + "\\output\\fourthLRforPredictors\\";
-			String initCutoffTable = "cutoff_all_single";
-			//String predictCufoff = "cutoff_predict";
-			if(args[1].equalsIgnoreCase("-f")){
-				predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
-				System.out.println("Select predictors from CLE results: "+predictors);
-			}
-
-			if(args[1].equalsIgnoreCase("-s")){
-				equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
-				
-				PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
-			}
-			if(args[1].equalsIgnoreCase("-a")){
-				PredictByLR.selectFinalCufoffs(numTags,startVersion,initCutoffTable,"cutoff_final_single");
-			}
+		/**
+		 * ChangeAnalysis done, next need Clementine 12 to the job: 
+		 * input: predictors
+		 * output: enter models
+		 */
+		
+		/*
+		 * input: enter models
+		 * output: initCutoffTable,finalCutoffTable
+		 */
+		if(args[0].equalsIgnoreCase("build-init-cutoff")){
+			String lr_sourceDir = userDir + "\\output\\cle_frameworks_two\\enter-7\\";
+			String initCutoffTable = "cutoff_all_single_7"; 
+			equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
+			PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
 			
-			//table 'cutoff_predict' must be prepared in db
-			if(args[1].equalsIgnoreCase("-p")){
-				String outputFile = userDir + "\\output\\final-version-predictions-single.txt";
-				PredictByLR.predictFinalVersion(0.04,numTags,lr_sourceDir,outputFile,changeTableName);
-			}
 		}
+		
+		if(args[0].equalsIgnoreCase("build-final-cutoff")){
+			String initCutoffTable = "cutoff_all_single_7"; //"cutoff_all_single_7"
+			String finalCutoffTable = "cutoff_final_single_7"; //"cutoff_final_single_7"
+			PredictByLR.selectFinalCufoffs(numTags,startVersion,initCutoffTable,finalCutoffTable);
+			PredictByLR.filterFinalCutoffs(numTags,startVersion,finalCutoffTable);
+		}
+		
+		if(args[0].equalsIgnoreCase("output-prediction-results")){
+			String lr_sourceDir = userDir + "\\output\\cle_frameworks_one\\enter-6\\";
+			String outputFile = lr_sourceDir + "final-version-predictions-single.txt";
+			double cutoff = 0.04;
+			PredictByLR.predictFinalVersion(cutoff,numTags,lr_sourceDir,outputFile,changeTableName);
+		}
+		
 		if(args[0].equalsIgnoreCase("recovery")){
 			//recovery from the last table to make descriptive statistic
 			//transform: freq*33, seq*32, distance/(freq*33),recency,lifecycle,id,predict
@@ -153,9 +176,19 @@ public class Run {
 		
 		if(args[0].equalsIgnoreCase("update-new-database")){
 			//update the change_history table to filter source code
-			//String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
-			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js",".conf",".xml",".txt",".properties","bat","notice","readme","makefile"};
-			RecoveryAndUpdate.filterDataToNewDB(changeTableName,includeTypes);
+			
+			if(args[1].equalsIgnoreCase("-two")){
+				String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
+				RecoveryAndUpdate.filterDataFromDBTwo(changeTableName,numTags,includeTypes);
+				}
+			else{
+				String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js",".conf",".xml",".txt",".properties","bat","notice","readme","makefile"};
+				RecoveryAndUpdate.filterDataToNewDB(changeTableName,includeTypes);
+				}
+		}
+		if(args[0].equalsIgnoreCase("build-all-changes")){
+			String tablename = "changes_in_all";
+			RecoveryAndUpdate.generateAllChanges(tablename,datasetAll);
 		}
 	}
 
