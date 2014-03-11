@@ -261,4 +261,24 @@ public class RecoveryAndUpdate {
 		}
 		return latestFilenames;
 	}
+
+	public static void scanStableFiles(String output,String tablename) throws IOException, SQLException {
+		PrintWriter pwt = new PrintWriter(new FileWriter(new File(output)));
+		Connector c = new Connector();
+		Statement st = c.getNewStatement();
+		ResultSet rs;
+		int count = 0;
+		for(int i =2; i<30;i++){
+			String query = "select count(id) from "+tablename +" where frequency=1 and lifecycle="+(31-i);
+			rs = st.executeQuery(query);
+			if(rs.next())
+				count = rs.getInt(1);
+			
+			pwt.println("VID="+i+": "+count);
+			if(p_debug)
+				System.out.println("VID="+i+": "+count);
+		}
+		c.close();
+		pwt.close();
+	}
 }

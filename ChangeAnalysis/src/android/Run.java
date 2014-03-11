@@ -196,7 +196,11 @@ public class Run {
 			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
 			RecoveryAndUpdate rau = new RecoveryAndUpdate();
 			rau.scanFile(root,"29_30",includeTypes,0);
+		}if(args[0].equalsIgnoreCase("scan-stable-2-29")){
+			String output = userDir + "\\output\\stable-files-2-29.txt";
+			RecoveryAndUpdate.scanStableFiles(output,"29_30");
 		}
+		
 	}
 
 	public static void callCmd(String locationCmd) {
