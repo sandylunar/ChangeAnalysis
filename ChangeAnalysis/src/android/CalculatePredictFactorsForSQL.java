@@ -162,6 +162,7 @@ public class CalculatePredictFactorsForSQL {
 		return new Double(changes / total);
 	}
 
+	@SuppressWarnings("unused")
 	private Double getModuleVolatilityAVG(String moduleWrite, int currColumn) {
 		double sum = 0;
 
@@ -323,12 +324,13 @@ public class CalculatePredictFactorsForSQL {
 					isFirst = false;
 				}
 			}
-		}rs.next();
+		}
 
 		if (isFirst)
 			life.put(fileID, currColumn - BEGIN + 2.0); // 第一个版本中新增的
 	}
 
+	@SuppressWarnings("unused")
 	private void normalize(int currColumn, Integer id) {
 		if (freq.get(id) != null) {
 			Double b = freq.get(id);
@@ -355,8 +357,8 @@ public class CalculatePredictFactorsForSQL {
 		boolean isDel = false;
 		boolean isAdd = false;
 
-		//TODO start from 3/BEGIN to 31,finish 27
-		for (int currColumn = 3; currColumn <= 3; currColumn++) {
+		//TODO start from 3/BEGIN to 31,finish 5
+		for (int currColumn = 3; currColumn <= 5; currColumn++) {
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -395,6 +397,7 @@ public class CalculatePredictFactorsForSQL {
 					// 计算当前版本的连续变更的次数
 					seqAndRecency(currColumn, fileID);
 					freqAndDistance(fileID, currColumn);
+					
 					//normalize(currColumn, fileID);
 					occurrence(fileID);
 					actualChange(currColumn, fileID);
@@ -414,6 +417,12 @@ public class CalculatePredictFactorsForSQL {
 					+ currTableName);
 
 			double value;
+			/*for(Integer j : fileIDs){
+				value = life.get(j) == null ? 0.0 : life.get(j);
+				String updateSQL = "update "+currTableName+" set lifecycle = "+value+" where id = "+j;
+				statement.execute(updateSQL);
+			}*/
+			
 			for (Integer j : fileIDs) {
 				String insertSQL=null;
 				

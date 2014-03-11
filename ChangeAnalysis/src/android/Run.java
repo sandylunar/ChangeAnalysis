@@ -1,5 +1,6 @@
 package android;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -189,6 +190,12 @@ public class Run {
 		if(args[0].equalsIgnoreCase("build-all-changes")){
 			String tablename = "changes_in_all";
 			RecoveryAndUpdate.generateAllChanges(tablename,datasetAll);
+		}if(args[0].equalsIgnoreCase("scan-last-files")){
+			String root = "L:\\android\\frameworks";
+			System.out.println("Start..");
+			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
+			RecoveryAndUpdate rau = new RecoveryAndUpdate();
+			rau.scanFile(root,"29_30",includeTypes,0);
 		}
 	}
 

@@ -1,15 +1,32 @@
 package database;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class RecoveryAndUpdate {
 	
-	
+	PrintWriter pw;;  
 
 	private static final boolean p_debug = true;
+	
+	List<String> latestFilenames = null;
+	
+	HashMap<String, Integer> packageCount = new HashMap<String, Integer>();
+	
+	int stablefiles = 0;
+	
+	 String[] includeTypes = null;
+
+	private int level;
 
 	public static void recoveryFromTheLastTable(String targetTableName, String outputTableName) throws SQLException {
 
@@ -163,5 +180,85 @@ public class RecoveryAndUpdate {
 			System.out.println(query);
 		}
 		c.close();
+	}
+
+	public void scanFile(String root) {
+	      File dir = new File(root); 
+	        File[] files = dir.listFiles(); 
+	        
+	        if (files == null) 
+	            return ; 
+	        for (int i = 0; i < files.length; i++) { 
+	            if (files[i].isDirectory()) { 
+	            	scanFile(files[i].getAbsolutePath()); 
+	            } else { 
+	                String strFileName = files[i].getAbsolutePath();
+	                
+	                if(includeTypes(strFileName,includeTypes)){
+	                	String trimName = strFileName.substring(22);
+	                	if(!latestFilenames.contains(trimName)){
+	                		pw.println("Stable file: "+trimName);
+	                		stablefiles++;
+	                		countPackage(trimName,level);
+	                	}
+	                }
+	            } 
+	        } 
+	}
+	
+	private void countPackage(String name, int level) {
+		String[] tokens = name.split("\\\\");
+
+		if (tokens.length == 1)
+			return;
+
+		if (level > tokens.length - 2) {
+			System.err.println("Package Level out of the boundary: "
+					+ level + " > " + (tokens.length - 2));
+			return ;
+		}
+		Integer num = packageCount.get(tokens[level]);
+		if(num == null || num == 0){
+			packageCount.put(tokens[level], 1);
+		}
+		else{
+			packageCount.put(tokens[level], num+1);
+		}
+	}
+
+	public void scanFile(String root, String tablename,
+			String[] includeTypes2, int level) throws SQLException, IOException {
+		this.level = level;
+			pw = new PrintWriter(new FileWriter(new File(System.getProperty("user.dir")+"\\output\\stable-files.txt")));
+			latestFilenames = RecoveryAndUpdate.getLatestFileNames(tablename);
+			includeTypes = includeTypes2;
+			scanFile(root);
+			pw.println(packageCount);
+			pw.println("Stable files = "+stablefiles+" , latest file size = "+latestFilenames.size());
+			pw.close();
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static List<String> getLatestFileNames(String tablename) throws SQLException {
+		ArrayList<String> latestFilenames = new ArrayList<String>();
+		Connector c = new Connector();
+		Statement st1 = c.getNewStatement();
+		Statement st2 = c.getNewStatement();
+		
+		ResultSet rs1 = st1.executeQuery("select id from "+tablename);
+		while(rs1.next()){
+			int id = rs1.getInt("id");
+			ResultSet rs2 = st2.executeQuery("select name from change_history where id = "+id);
+			if(rs2.next()){
+				String f = rs2.getString("name");
+				latestFilenames.add(f);
+			}
+			else{
+				System.out.println("Wrong, cannot find name in change_history where id = "+id);
+			}
+				
+		}
+		return latestFilenames;
 	}
 }
