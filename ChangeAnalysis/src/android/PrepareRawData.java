@@ -181,6 +181,9 @@ public class PrepareRawData {
 			String subtable,query;
 			subtable = i+"_"+(i+1);
 			if(i==1){
+				String drop = "drop table if exists "+tablename;
+				stmt.executeUpdate(drop);
+				System.out.println(i+": "+drop);
 				query = "create table if not exists "+tablename+" select * from "+subtable;
 			}
 			else{

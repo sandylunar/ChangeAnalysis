@@ -6,9 +6,8 @@
 
   Equation For 1
 
-   3.354 * distance + 
-   0.6508 * sequence + 
-   -23.52 * pakvolality_cum + 
-   -3.01 * recency + 
-   + -9.028
+   3.052 * distance + 
+   0.5242 * sequence + 
+   -2.15 * recency + 
+   + -14.9
 

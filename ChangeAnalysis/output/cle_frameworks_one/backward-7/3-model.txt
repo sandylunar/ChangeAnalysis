@@ -6,10 +6,9 @@
 
   Equation For 1
 
-   0.6482 * frequency + 
-   0.8395 * distance + 
-   -0.5199 * lifecycle + 
-   -2.321 * occurrence + 
-   -0.9163 * recency + 
-   + -1.515
+   2.119 * frequency + 
+   -0.6589 * distance + 
+   -1.162 * lifecycle + 
+   -0.5378 * sequence + 
+   + -0.2516
 

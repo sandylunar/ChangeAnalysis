@@ -207,7 +207,7 @@ public class RecoveryAndUpdate {
 	}
 	
 	private void countPackage(String name, int level) {
-		String[] tokens = name.split("\\\\");
+		String[] tokens = name.split("/");
 
 		if (tokens.length == 1)
 			return;
@@ -269,7 +269,7 @@ public class RecoveryAndUpdate {
 		ResultSet rs;
 		int count = 0;
 		for(int i =2; i<30;i++){
-			String query = "select count(id) from "+tablename +" where frequency=1 and lifecycle="+(31-i);
+			String query = "select count(id) from "+tablename +" where frequency=0 and lifecycle="+(31-i);
 			rs = st.executeQuery(query);
 			if(rs.next())
 				count = rs.getInt(1);
@@ -280,5 +280,26 @@ public class RecoveryAndUpdate {
 		}
 		c.close();
 		pwt.close();
+	}
+
+	public void scanFreqFiles(String output, String tablename, int level) throws IOException, SQLException {
+		PrintWriter pwt = new PrintWriter(new FileWriter(new File(output)));
+		Connector c = new Connector();
+		Statement st = c.getNewStatement();
+		ResultSet rs1,rs2;
+		String name="";
+		rs1 = st.executeQuery("select id from "+tablename+" where frequency>3");
+		while(rs1.next()){
+			int id = rs1.getInt(1);
+			Statement st2 = c.getNewStatement();
+			rs2 = st2.executeQuery("select name from change_history where id="+id);
+			if(rs2.next())
+				name = rs2.getString(1);
+			countPackage(name,level);
+		}
+		pwt.println(packageCount);
+		System.out.println(packageCount);
+		pwt.close();
+		c.close();
 	}
 }

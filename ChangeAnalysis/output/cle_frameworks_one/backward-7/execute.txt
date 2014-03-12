@@ -1,5 +1,0 @@
-model: 
-backward stepwise
-7 parameters(include recency)
-
-

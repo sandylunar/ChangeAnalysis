@@ -301,12 +301,15 @@ public class PredictByLR {
 		Statement stmt = c.getNewStatement();
 		ResultSet rs;
 		
+		String dropSQL = "drop table if exists "+cutoffTablename;
 		String createSQL = "create table if not exists "
 				+ cutoffTablename
 				+ "(id int primary key AUTO_INCREMENT, model varchar(10), cutoff double(8,4), m_precision double(20,4), recall double(20,4), positive double(20,4),f_measure double(20,4))";		
-		if(p_debug)
-			System.out.println(createSQL);
+		if(p_debug){
+			System.out.println(dropSQL+"/n"+createSQL);
+			}
 		
+		stmt.executeUpdate(dropSQL);
 		stmt.executeUpdate(createSQL);
 		String insertPreSQL = "insert into "+ cutoffTablename+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
 		
@@ -437,13 +440,15 @@ public class PredictByLR {
 			String cutoffTablename = finalCutoffTable+"_"+f_threshold;
 			cutoffTablename = cutoffTablename.replace('.', '_');
 			
+			String dropSQL = "drop table if exists "+cutoffTablename;
 			String createSQL = "create table if not exists "
 					+ cutoffTablename
 					+ "(id int primary key AUTO_INCREMENT, model varchar(10), cutoff double(8,4), m_precision double(20,4), recall double(20,4), positive double(20,4),f_measure double(20,4))";		
 			
 			if(p_debug)
-				System.out.println(createSQL);
+				System.out.println(dropSQL+"\n"+createSQL);
 			
+			stmt.executeUpdate(dropSQL);
 			stmt.executeUpdate(createSQL);
 			
 			for(int i = startVersion; i<numTags-1;i++){

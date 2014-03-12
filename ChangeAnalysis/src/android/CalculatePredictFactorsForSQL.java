@@ -111,7 +111,7 @@ public class CalculatePredictFactorsForSQL {
 				"predict_change" };
 
 		for (int i = 1; i < tagSize ; i++) {
-			
+			statement.executeUpdate("drop table if exists " + i + "_" + (i + 1));
 			createTableSQL = "create table if not exists " + i + "_" + (i + 1)
 					+ "(id int primary key";
 			for (String col : columns) {
@@ -120,7 +120,7 @@ public class CalculatePredictFactorsForSQL {
 			createTableSQL += ")";
 
 			// System.out.println("Mysql: " + createTableSQL);
-			//statement.executeUpdate("drop table if exists " + i + "_" + (i + 1));
+			
 			statement.executeUpdate(createTableSQL);
 
 		}
@@ -139,7 +139,7 @@ public class CalculatePredictFactorsForSQL {
 				value = rs.getInt(prev);
 				// 计算freq, occur
 				// Cell中的值为1或者2时，Freq++， Occur++
-				if (value == 1 || value == 2) {// ||grid. getContents().equals("2")
+				if (value == 1) {// ||grid. getContents().equals("2")
 					frequence++;
 					sumDis += currColumn - prev;
 				}
@@ -358,7 +358,7 @@ public class CalculatePredictFactorsForSQL {
 		boolean isAdd = false;
 
 		//TODO start from 3/BEGIN to 31,finish 5
-		for (int currColumn = 3; currColumn <= 5; currColumn++) {
+		for (int currColumn = 3; currColumn <= 31; currColumn++) {  
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -625,7 +625,7 @@ public class CalculatePredictFactorsForSQL {
 		int tmp = volatility[currColumn - BEGIN][moduleLocation][0];
 		volatility[currColumn - BEGIN][moduleLocation][0] = tmp + 1;
 
-		if (value == 1 || value == 2) {
+		if (value == 1 ) {
 			tmp = volatility[currColumn - BEGIN][moduleLocation][1];
 			volatility[currColumn - BEGIN][moduleLocation][1] = tmp + 1;
 		}
@@ -643,7 +643,7 @@ public class CalculatePredictFactorsForSQL {
 			int value;
 			for (int t = BEGIN; t <= currColumn; t++) {
 				value = rs.getInt(t);
-				if (value == 2 || value == 1) {
+				if (value == 1) {
 					if (last == t - 1)
 						sequence++;
 					else

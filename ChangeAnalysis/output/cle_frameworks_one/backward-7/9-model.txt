@@ -6,6 +6,6 @@
 
   Equation For 1
 
-   1.008 * frequency + 
-   + -11.05
+   0.8424 * frequency + 
+   + -9.961
 

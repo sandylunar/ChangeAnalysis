@@ -6,10 +6,10 @@
 
   Equation For 1
 
-   -0.01148 * recency + 
-   -0.07202 * lifecycle + 
-   -1.463 * occurrence + 
-   5.076 * pakvolality_cum + 
-   0.3772 * frequency + 
-   + -1.399
+   0.4224 * frequency + 
+   -0.02014 * distance + 
+   -0.08382 * lifecycle + 
+   4.959 * pakvolality_cum + 
+   -0.04077 * recency + 
+   + -0.7837
 

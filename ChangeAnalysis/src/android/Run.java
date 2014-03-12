@@ -130,7 +130,7 @@ public class Run {
 		 * output: predictors
 		 */
 		if(args[0].equalsIgnoreCase("select-predictors-from-backwards")){
-			String fp_sourceDir = userDir + "\\output\\cle_frameworks_two\\backward-6\\";
+			String fp_sourceDir = userDir + "\\output\\cle_frameworks_one\\backward-7\\";
 			predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
 			System.out.println("Select predictors from CLE results: "+predictors);
 		}
@@ -146,7 +146,7 @@ public class Run {
 		 * output: initCutoffTable,finalCutoffTable
 		 */
 		if(args[0].equalsIgnoreCase("build-init-cutoff")){
-			String lr_sourceDir = userDir + "\\output\\cle_frameworks_two\\enter-7\\";
+			String lr_sourceDir = userDir + "\\output\\cle_frameworks_one\\enter-7\\";
 			String initCutoffTable = "cutoff_all_single_7"; 
 			equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
 			PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
@@ -199,6 +199,10 @@ public class Run {
 		}if(args[0].equalsIgnoreCase("scan-stable-2-29")){
 			String output = userDir + "\\output\\stable-files-2-29.txt";
 			RecoveryAndUpdate.scanStableFiles(output,"29_30");
+		}if(args[0].equalsIgnoreCase("scan-freq-29")){
+			String output = userDir + "\\output\\freq-files-29-30.txt";
+			RecoveryAndUpdate rau = new RecoveryAndUpdate();
+			rau.scanFreqFiles(output,"29_30",0);
 		}
 		
 	}
