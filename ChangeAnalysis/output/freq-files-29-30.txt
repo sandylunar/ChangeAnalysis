@@ -1,0 +1,1 @@
+{app=41, os=29, text=24, accounts=5, hardware=5, animation=5, test=2, webkit=21, gesture=1, provider=8, appwidget=5, net=22, ddm=1, database=19, content=39, bluetooth=12, speech=3, inputmethodservice=8, preference=8, service=1, nfc=6, accessibilityservice=2, view=55, widget=66, util=5}

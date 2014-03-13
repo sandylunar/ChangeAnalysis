@@ -195,7 +195,7 @@ public class RecoveryAndUpdate {
 	                String strFileName = files[i].getAbsolutePath();
 	                
 	                if(includeTypes(strFileName,includeTypes)){
-	                	String trimName = strFileName.substring(22);
+	                	String trimName = strFileName.substring(40); //TODO(22)
 	                	if(!latestFilenames.contains(trimName)){
 	                		pw.println("Stable file: "+trimName);
 	                		stablefiles++;
@@ -207,7 +207,7 @@ public class RecoveryAndUpdate {
 	}
 	
 	private void countPackage(String name, int level) {
-		String[] tokens = name.split("/");
+		String[] tokens = name.split("\\\\");//TODO"/"
 
 		if (tokens.length == 1)
 			return;
@@ -236,7 +236,6 @@ public class RecoveryAndUpdate {
 			pw.println(packageCount);
 			pw.println("Stable files = "+stablefiles+" , latest file size = "+latestFilenames.size());
 			pw.close();
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -262,19 +261,34 @@ public class RecoveryAndUpdate {
 		return latestFilenames;
 	}
 
-	public static void scanStableFiles(String output,String tablename) throws IOException, SQLException {
+	public void scanStableFiles(String output,String tablename, String pak) throws IOException, SQLException {
 		PrintWriter pwt = new PrintWriter(new FileWriter(new File(output)));
 		Connector c = new Connector();
 		Statement st = c.getNewStatement();
-		ResultSet rs;
-		int count = 0;
+		Statement st2 = c.getNewStatement();
+		ResultSet rs,rs2;
+		
 		for(int i =2; i<30;i++){
-			String query = "select count(id) from "+tablename +" where frequency=0 and lifecycle="+(31-i);
+			int count = 0;
+			String query = "select id from "+tablename +" where frequency=0 and lifecycle="+(31-i);
+			
 			rs = st.executeQuery(query);
-			if(rs.next())
-				count = rs.getInt(1);
+			while(rs.next()){
+				count++;
+				int id  = rs.getInt(1);
+				rs2 = st2.executeQuery("select name from change_history where id="+id);
+				if(rs2.next()){
+					String name = rs2.getString(1);
+					if(!pak.isEmpty())
+						if(!name.startsWith(pak+"/"))
+							continue;
+					countPackage(name.substring(pak.length()+1), 0) ;
+					}
+				}
 			
 			pwt.println("VID="+i+": "+count);
+			pwt.println(packageCount);
+			System.out.println(packageCount);
 			if(p_debug)
 				System.out.println("VID="+i+": "+count);
 		}
@@ -282,7 +296,7 @@ public class RecoveryAndUpdate {
 		pwt.close();
 	}
 
-	public void scanFreqFiles(String output, String tablename, int level) throws IOException, SQLException {
+	public void scanFreqFiles(String output, String tablename, int level, String pak) throws IOException, SQLException {
 		PrintWriter pwt = new PrintWriter(new FileWriter(new File(output)));
 		Connector c = new Connector();
 		Statement st = c.getNewStatement();
@@ -293,9 +307,13 @@ public class RecoveryAndUpdate {
 			int id = rs1.getInt(1);
 			Statement st2 = c.getNewStatement();
 			rs2 = st2.executeQuery("select name from change_history where id="+id);
-			if(rs2.next())
+			if(rs2.next()){
 				name = rs2.getString(1);
-			countPackage(name,level);
+				if(!pak.isEmpty())
+					if(!name.startsWith(pak+"/"))
+						continue;
+			}
+			countPackage(name.substring(pak.length()+1),level);
 		}
 		pwt.println(packageCount);
 		System.out.println(packageCount);

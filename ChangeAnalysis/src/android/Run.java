@@ -190,19 +190,20 @@ public class Run {
 		if(args[0].equalsIgnoreCase("build-all-changes")){
 			String tablename = "changes_in_all";
 			RecoveryAndUpdate.generateAllChanges(tablename,datasetAll);
-		}if(args[0].equalsIgnoreCase("scan-last-files")){
-			String root = "L:\\android\\frameworks";
+		}if(args[0].equalsIgnoreCase("scan-stable-first-files")){
+			String root = "L:\\android\\frameworks\\core\\java\\android";
 			System.out.println("Start..");
 			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};
 			RecoveryAndUpdate rau = new RecoveryAndUpdate();
 			rau.scanFile(root,"29_30",includeTypes,0);
 		}if(args[0].equalsIgnoreCase("scan-stable-2-29")){
 			String output = userDir + "\\output\\stable-files-2-29.txt";
-			RecoveryAndUpdate.scanStableFiles(output,"29_30");
+			RecoveryAndUpdate rau = new RecoveryAndUpdate();
+			rau.scanStableFiles(output,"29_30","core");
 		}if(args[0].equalsIgnoreCase("scan-freq-29")){
 			String output = userDir + "\\output\\freq-files-29-30.txt";
 			RecoveryAndUpdate rau = new RecoveryAndUpdate();
-			rau.scanFreqFiles(output,"29_30",0);
+			rau.scanFreqFiles(output,"29_30",0,"core/java/android");
 		}
 		
 	}

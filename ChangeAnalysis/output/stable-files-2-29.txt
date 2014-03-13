@@ -1,28 +1,56 @@
 VID=2: 47
+{java=13}
 VID=3: 19
+{jni=2, java=23}
 VID=4: 21
+{jni=2, java=34}
 VID=5: 1
+{jni=2, java=34}
 VID=6: 1
+{jni=2, java=34}
 VID=7: 446
+{jni=2, tests=343, java=54}
 VID=8: 0
+{jni=2, tests=343, java=54}
 VID=9: 0
+{jni=2, tests=343, java=54}
 VID=10: 34
+{jni=4, tests=349, java=61}
 VID=11: 0
+{jni=4, tests=349, java=61}
 VID=12: 3
+{jni=4, tests=349, java=64}
 VID=13: 36
+{jni=4, tests=349, java=64}
 VID=14: 1
+{jni=4, tests=349, java=64}
 VID=15: 0
+{jni=4, tests=349, java=64}
 VID=16: 0
+{jni=4, tests=349, java=64}
 VID=17: 145
+{jni=8, tests=362, java=110}
 VID=18: 144
+{jni=8, tests=379, java=140}
 VID=19: 0
+{jni=8, tests=379, java=140}
 VID=20: 10
+{jni=8, tests=379, java=142}
 VID=21: 0
+{jni=8, tests=379, java=142}
 VID=22: 407
+{jni=14, tests=391, java=173}
 VID=23: 5
+{jni=14, tests=391, java=173}
 VID=24: 77
+{jni=14, tests=402, java=184}
 VID=25: 0
+{jni=14, tests=402, java=184}
 VID=26: 7
+{jni=14, tests=402, java=188}
 VID=27: 110
+{jni=16, tests=413, java=209}
 VID=28: 2
+{jni=16, tests=414, java=209}
 VID=29: 470
+{jni=20, tests=417, java=292}
