@@ -74,11 +74,21 @@ public class Run {
 		}
 		if (args[0].equalsIgnoreCase("prepare-trainset")) {
 			CalculatePredictFactorsForSQL c = new CalculatePredictFactorsForSQL();
-			try {
-				c.readAndCalculateFromMySQL(changeTableName, numTags, 0);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			if(args[1].equalsIgnoreCase("add")){
+				try {
+					c.readAndCalculateFromMySQL(changeTableName, numTags, 0);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
+			else if(args[1].equalsIgnoreCase("update")){
+				try {
+					c.updateMetrics(changeTableName, numTags, 0);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+				
 		}
 
 		/*if (args[0].equalsIgnoreCase("predict-lr")) {
@@ -114,10 +124,19 @@ public class Run {
 		}*/
 		
 		if(args[0].equalsIgnoreCase("add-dataset-assemble")){
-			PrepareRawData.alterTableColumnDataset(numTags);
+			//PrepareRawData.alterTableColumnDataset(numTags);
 			PrepareRawData.assembleAllForCle(datasetAll,numTags);
+			
+			System.out.println("Bulding changes_in_all...");
+			String tablename = "changes_in_all";
+			RecoveryAndUpdate.generateAllChanges(tablename,"dataset_all");
+			
 			System.out.println("Done...");
 		}
+		/*if(args[0].equalsIgnoreCase("build-all-changes")){
+			String tablename = "changes_in_all";
+			RecoveryAndUpdate.generateAllChanges(tablename,"dataset_all");
+		}*/
 		
 		/**
 		 * ChangeAnalysis done, next need Clementine 12 to the job: 
@@ -187,10 +206,7 @@ public class Run {
 				RecoveryAndUpdate.filterDataToNewDB(changeTableName,includeTypes);
 				}
 		}
-		if(args[0].equalsIgnoreCase("build-all-changes")){
-			String tablename = "changes_in_all";
-			RecoveryAndUpdate.generateAllChanges(tablename,datasetAll);
-		}if(args[0].equalsIgnoreCase("scan-stable-first-files")){
+		if(args[0].equalsIgnoreCase("scan-stable-first-files")){
 			String root = "L:\\android\\frameworks\\core\\java\\android";
 			System.out.println("Start..");
 			String[] includeTypes = {".c",".cpp",".h",".cs",".java",".js"};

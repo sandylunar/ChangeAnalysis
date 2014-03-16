@@ -171,10 +171,13 @@ public class RecoveryAndUpdate {
 
 	public static void generateAllChanges(String tablename, String sourcetable) throws SQLException {
 		
+		
+		String drop = "drop table if exists "+tablename;
 		String query = "create table if not exists "+tablename+" select * from "+sourcetable+" where actual_change = 1";
 		
 		Connector c = new Connector();
 		Statement stmt = c.getNewStatement();
+		stmt.executeUpdate(drop);
 		stmt.executeUpdate(query);
 		if(p_debug){
 			System.out.println(query);

@@ -141,7 +141,7 @@ public class CalculatePredictFactorsForSQL {
 				// Cell中的值为1或者2时，Freq++， Occur++
 				if (value == 1) {// ||grid. getContents().equals("2")
 					frequence++;
-					sumDis += currColumn - prev;
+					sumDis += currColumn - prev+1;
 				}
 			}
 			freq.put(id, frequence);
@@ -392,6 +392,7 @@ public class CalculatePredictFactorsForSQL {
 					fileIDs.add(new Integer(fileID));
 
 					// 计算当前版本每个用例的寿命 life
+					
 					lifecycle(currColumn, fileID);
 
 					// 计算当前版本的连续变更的次数
@@ -417,11 +418,6 @@ public class CalculatePredictFactorsForSQL {
 					+ currTableName);
 
 			double value;
-			/*for(Integer j : fileIDs){
-				value = life.get(j) == null ? 0.0 : life.get(j);
-				String updateSQL = "update "+currTableName+" set lifecycle = "+value+" where id = "+j;
-				statement.execute(updateSQL);
-			}*/
 			
 			for (Integer j : fileIDs) {
 				String insertSQL=null;
@@ -635,6 +631,7 @@ public class CalculatePredictFactorsForSQL {
 	private void seqAndRecency(int currColumn, int fileID) throws SQLException {
 		int sequence = 0;
 		int last = 0;
+		int added = BEGIN-1;
 
 		String query = "select * from " + changeHistoryTable + " where id="
 				+ fileID;
@@ -652,6 +649,9 @@ public class CalculatePredictFactorsForSQL {
 					last = t;
 					lastChange = t;
 				}
+				else if(value ==2){
+					added = t;
+				}
 			}
 		}rs.close();
 
@@ -660,7 +660,100 @@ public class CalculatePredictFactorsForSQL {
 		else
 			seq.put(fileID, sequence+0.0);
 			//seq.put(fileID, sequence / (currColumn - 2.0));
-		lastDistance.put(fileID, currColumn - lastChange + 0.0);
+		
+		if(last == 0){//never change after added
+			lastDistance.put(fileID, currColumn - added + 1.0);
+		}else
+			lastDistance.put(fileID, currColumn - lastChange + 1.0);
 
+	}
+
+	public void updateMetrics(String changeTableName, int tagSize,
+			int packageLevel) throws SQLException {
+
+		changeHistoryTable = changeTableName;
+		initForMysql(changeTableName, packageLevel);
+
+		boolean isDel = false;
+		boolean isAdd = false;
+
+		//TODO start from 3/BEGIN to 31,finish 5
+		for (int currColumn = 3; currColumn <= 30; currColumn++) {  
+			System.out.println("Working on for column: " + currColumn);
+			initFactors();
+			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
+																		// the
+																		// file
+																		// IDs
+																		// existing
+																		// in
+																		// the
+																		// current
+																		// column
+
+			System.out
+					.println("Working on Lifecycle, Sequency, Recency, Frequency, Distance, Occurrence, and actual_changes");
+			
+			String query = "select id from "+changeTableName;
+			Statement statementIDs = c.getNewStatement();
+			ResultSet rsIDs = statementIDs.executeQuery(query);
+			while(rsIDs.next()){
+				int fileID = rsIDs.getInt("id");
+				
+				if (fileID % 1000 == 0)
+					System.out.println(" " + fileID);
+				isFirst = true;
+				lastChange = BEGIN;
+
+				isDel = isHistoricDeletedFile(currColumn, fileID);
+				isAdd = isFutureAddedFile(currColumn, fileID);
+
+				if (!isDel && !isAdd) {
+					fileIDs.add(new Integer(fileID));
+
+					// 计算当前版本每个用例的寿命 life
+					//TODO
+					//lifecycle(currColumn, fileID);
+
+					// 计算当前版本的连续变更的次数
+					seqAndRecency(currColumn, fileID);
+					freqAndDistance(fileID, currColumn);
+					
+					////normalize(currColumn, fileID);
+					//occurrence(fileID);
+					//actualChange(currColumn, fileID);
+					//readVolatility(new Integer(fileID), currColumn);
+				}
+				
+			}
+			rsIDs.close();
+			statementIDs.close();
+			
+			// 输出
+			String currTableName = (currColumn - BEGIN + 1) + "_"
+					+ (currColumn - BEGIN + 2);
+			System.out.println("MySQL: Writing Factors to TABLE: "
+					+ currTableName);
+
+			double value,freqV,distanceV;
+			for(Integer j : fileIDs){
+				value = lastDistance.get(j) == null ? 0.0 : lastDistance.get(j);
+				freqV = freq.get(j) == null ? 0.0 : freq.get(j);
+				distanceV = distance.get(j) == null ? 0.0 : distance.get(j);
+				//value = life.get(j) == null ? 0.0 : life.get(j);
+				String updateSQL = "update "+currTableName+" set recency = "+value+", frequency = "+freqV+", distance = "+distanceV+" where id = "+j;
+				statement.execute(updateSQL);
+				System.out.println(updateSQL);
+			}
+			
+
+			freq.clear();
+			distance.clear();
+			fv.clear();
+			life.clear();
+		}
+
+		System.out.println("Done...");
+		closeForMysql();
 	}
 }
