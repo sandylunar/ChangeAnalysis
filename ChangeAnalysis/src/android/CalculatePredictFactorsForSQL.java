@@ -138,6 +138,7 @@ public class CalculatePredictFactorsForSQL {
 			double sumDis = 0;
 			double frequence = 0;
 			double d = 0;
+			double l = 0;
 			for (int prev = BEGIN; prev <= currColumn; prev++) {
 				value = rs.getInt(prev);
 				// ¼ÆËãfreq, occur
@@ -152,14 +153,17 @@ public class CalculatePredictFactorsForSQL {
 				d = sumDis/((frequence+1)*(currColumn-BEGIN+1));
 			}
 			else{ 
-				double l = life.get(id);
-				d = l/((frequence+1)*(currColumn-BEGIN+1));
+				l = life.get(id);
+				if(l==currColumn-BEGIN+2){
+					d = l/((frequence+1)*(currColumn-BEGIN+2));
+				}else
+					d = l/((frequence+1)*(currColumn-BEGIN+1));
 				}
 
 			
 			distance.put(id, d);
 			
-			if(p_debug&&d==0){
+			if(d==0||d>1){
 				System.out.println(id);
 				System.out.println();
 			}
