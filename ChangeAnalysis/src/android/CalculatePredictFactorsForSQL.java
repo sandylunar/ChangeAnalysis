@@ -155,6 +155,7 @@ public class CalculatePredictFactorsForSQL {
 				double l = life.get(id);
 				d = l/((frequence+1)*(currColumn-BEGIN+1));
 				}
+
 			
 			distance.put(id, d);
 			
