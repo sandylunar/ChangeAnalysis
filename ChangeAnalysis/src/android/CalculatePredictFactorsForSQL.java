@@ -1,5 +1,6 @@
 package android;
 
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ import database.Connector;
  */
 public class CalculatePredictFactorsForSQL {
 
+	private static final boolean p_debug = true;
 	/**
 	 * @param args
 	 */
@@ -135,6 +137,7 @@ public class CalculatePredictFactorsForSQL {
 			int value;
 			double sumDis = 0;
 			double frequence = 0;
+			double d = 0;
 			for (int prev = BEGIN; prev <= currColumn; prev++) {
 				value = rs.getInt(prev);
 				// 计算freq, occur
@@ -145,10 +148,22 @@ public class CalculatePredictFactorsForSQL {
 				}
 			}
 			freq.put(id, frequence);
-			if(frequence!=0)
-				distance.put(id, sumDis/frequence);
-			else 
-				distance.put(id, 0.0);
+			if(frequence!=0){
+				d = sumDis/((frequence+1)*(currColumn-BEGIN+1));
+			}
+			else{ 
+				double l = life.get(id);
+				d = l/((frequence+1)*(currColumn-BEGIN+1));
+				}
+			
+			distance.put(id, d);
+			
+			if(p_debug&&d==0){
+				System.out.println(id);
+				System.out.println();
+			}
+				
+			
 		}rs.close();
 	}
 
@@ -678,7 +693,7 @@ public class CalculatePredictFactorsForSQL {
 		boolean isAdd = false;
 
 		//TODO start from 3/BEGIN to 31,finish 5
-		for (int currColumn = 3; currColumn <= 30; currColumn++) {  
+		for (int currColumn = 3; currColumn <= 31; currColumn++) {  
 			System.out.println("Working on for column: " + currColumn);
 			initFactors();
 			LinkedList<Integer> fileIDs = new LinkedList<Integer>(); // store
@@ -694,10 +709,11 @@ public class CalculatePredictFactorsForSQL {
 			System.out
 					.println("Working on Lifecycle, Sequency, Recency, Frequency, Distance, Occurrence, and actual_changes");
 			
-			String query = "select id from "+changeTableName;
+			String query = "select id from "+changeTableName+";";
 			Statement statementIDs = c.getNewStatement();
 			ResultSet rsIDs = statementIDs.executeQuery(query);
 			while(rsIDs.next()){
+				
 				int fileID = rsIDs.getInt("id");
 				
 				if (fileID % 1000 == 0)
@@ -710,13 +726,14 @@ public class CalculatePredictFactorsForSQL {
 
 				if (!isDel && !isAdd) {
 					fileIDs.add(new Integer(fileID));
+					
 
 					// 计算当前版本每个用例的寿命 life
 					//TODO
-					//lifecycle(currColumn, fileID);
+					lifecycle(currColumn, fileID);
 
 					// 计算当前版本的连续变更的次数
-					seqAndRecency(currColumn, fileID);
+					//seqAndRecency(currColumn, fileID);
 					freqAndDistance(fileID, currColumn);
 					
 					////normalize(currColumn, fileID);
@@ -741,7 +758,8 @@ public class CalculatePredictFactorsForSQL {
 				freqV = freq.get(j) == null ? 0.0 : freq.get(j);
 				distanceV = distance.get(j) == null ? 0.0 : distance.get(j);
 				//value = life.get(j) == null ? 0.0 : life.get(j);
-				String updateSQL = "update "+currTableName+" set recency = "+value+", frequency = "+freqV+", distance = "+distanceV+" where id = "+j;
+				//String updateSQL = "update "+currTableName+" set recency = "+value+", frequency = "+freqV+", distance = "+distanceV+" where id = "+j;
+				String updateSQL = "update "+currTableName+" set distance = "+distanceV+" where id = "+j;
 				statement.execute(updateSQL);
 				System.out.println(updateSQL);
 			}
