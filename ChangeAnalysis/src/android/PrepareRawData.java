@@ -55,7 +55,7 @@ public class PrepareRawData {
     }
 
     public static void dumpRawTxtToMySQL(String tablename, String targetDir,
-	    ArrayList<String> tags) throws SQLException, IOException {
+	    ArrayList<String> tags) throws SQLException, IOException { 
 
 	String createTableSQL = getCreateTableSQL(tablename, tags.size());
 

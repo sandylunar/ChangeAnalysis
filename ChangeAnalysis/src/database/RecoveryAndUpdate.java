@@ -232,6 +232,7 @@ public class RecoveryAndUpdate {
 	public void scanFile(String root, String tablename,
 			String[] includeTypes2, int level) throws SQLException, IOException {
 		this.level = level;
+		
 			pw = new PrintWriter(new FileWriter(new File(System.getProperty("user.dir")+"\\output\\stable-files.txt")));
 			latestFilenames = RecoveryAndUpdate.getLatestFileNames(tablename);
 			includeTypes = includeTypes2;

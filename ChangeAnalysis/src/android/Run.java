@@ -149,7 +149,7 @@ public class Run {
 		 * output: predictors
 		 */
 		if(args[0].equalsIgnoreCase("select-predictors-from-backwards")){
-			String fp_sourceDir = userDir + "\\output\\cle_frameworks_one\\backward-7\\";
+			String fp_sourceDir = userDir + "\\output\\cle_frameworks_one\\backward-7-cumulative\\";
 			predictors = PredictByLR.selectParametersFromCLEResults(fp_sourceDir,numTags,startVersion);
 			System.out.println("Select predictors from CLE results: "+predictors);
 		}
@@ -165,16 +165,16 @@ public class Run {
 		 * output: initCutoffTable,finalCutoffTable
 		 */
 		if(args[0].equalsIgnoreCase("build-init-cutoff")){
-			String lr_sourceDir = userDir + "\\output\\cle_frameworks_one\\enter-7\\";
-			String initCutoffTable = "cutoff_all_single_7"; 
+			String lr_sourceDir = userDir + "\\output\\cle_frameworks_one\\enter-7-cumulative\\";
+			String initCutoffTable = "cutoff_all_cumulative_7_g"; 
 			equations = PredictByLR.getLREquationsFromCLEResults(lr_sourceDir,numTags,startVersion);
-			PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable);
+			PredictByLR.selectCutoffsFromCLEModels(equations,numTags,startVersion,initCutoffTable,false);
 			
 		}
 		
 		if(args[0].equalsIgnoreCase("build-final-cutoff")){
-			String initCutoffTable = "cutoff_all_single_7"; //"cutoff_all_single_7"
-			String finalCutoffTable = "cutoff_final_single_7"; //"cutoff_final_single_7"
+			String initCutoffTable = "cutoff_all_cumulative_7_g"; //"cutoff_all_single_7"
+			String finalCutoffTable = "cutoff_final_cumulative_7_g"; //"cutoff_final_single_7"
 			PredictByLR.selectFinalCufoffs(numTags,startVersion,initCutoffTable,finalCutoffTable);
 			PredictByLR.filterFinalCutoffs(numTags,startVersion,finalCutoffTable);
 		}

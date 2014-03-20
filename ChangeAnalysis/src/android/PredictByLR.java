@@ -295,7 +295,7 @@ public class PredictByLR {
 
 	//TODO
 	public static void selectCutoffsFromCLEModels(List<LREquation> equations,
-			int numTags, int startVersion, String cutoffTablename) throws SQLException {
+			int numTags, int startVersion, String cutoffTablename,boolean drop) throws SQLException {
 		String tablename;
 		Connector c = new Connector();
 		Statement stmt = c.getNewStatement();
@@ -309,7 +309,8 @@ public class PredictByLR {
 			System.out.println(dropSQL+"/n"+createSQL);
 			}
 		
-		stmt.executeUpdate(dropSQL);
+		if(drop)
+			stmt.executeUpdate(dropSQL);
 		stmt.executeUpdate(createSQL);
 		String insertPreSQL = "insert into "+ cutoffTablename+" (model, cutoff, m_precision, recall, positive,f_measure) values (?,?,?,?,?,?)";
 		
