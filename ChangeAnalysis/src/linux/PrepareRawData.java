@@ -1,4 +1,4 @@
-package android;
+package linux;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,16 +12,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import database.Connector;
 
 public class PrepareRawData {
 
-    private static boolean debug = true;
-
-	public static ArrayList<String> readTags(String tagPath) throws IOException {
+    public static ArrayList<String> readTags(String tagPath) throws IOException {
 	ArrayList<String> tags = new ArrayList<String>();
 	BufferedReader reader = new BufferedReader(new FileReader(tagPath));
 	String line = "";
@@ -29,133 +25,10 @@ public class PrepareRawData {
 	    tags.add(line);
 	}
 	reader.close();
-	return bubbleSort(tags);
+	return tags;
     }
 
-    private static ArrayList<String> bubbleSort(ArrayList<String> tags) {
-		int size = tags.size();
-    	int[] orders = new int[size];
-    	
-    	for(int i = 0; i<size;i++){
-    		orders[i] = i;
-    	}
-		
-		for (int i = 0; i < size; i++)
-        {
-            for (int j = i+1; j < size; j++)
-            {
-                if (compare(tags,orders[i],orders[j]))
-                {
-                    int temp = orders[i];
-                    orders[i] = orders[j];
-                    orders[j] = temp;
-                }
-            }
-        }
-		
-		if(debug ){
-			System.out.println("Sorted the ids: "+orders);
-		}
-		
-		ArrayList<String> sortedtags = new ArrayList<String>();
-		for(int index: orders){
-			sortedtags.add(tags.get(orders[index]));
-		}
-		
-		if(debug ){
-			System.out.println("Sorted the tags: "+sortedtags);
-		}
-		
-		
-		return sortedtags;
-	}
-
-	/**
-	 * if(tags[i]>tags[j]), return 1)
-	 * @param tags
-	 * @param i
-	 * @param j
-	 * @return
-	 */
-    private static boolean compare(ArrayList<String> tags, int i, int j) {
-		String[] ti = breakTags(tags.get(i));
-		String[] tj = breakTags(tags.get(j));
-		
-		int comp = ti.length<tj.length?ti.length:tj.length;
-		
-		for(int m = 0; m < comp; m++){
-			if(ti[m].equals(tj[m]))
-				continue;
-			if(compare(ti[m],tj[m]))
-				return true;
-		}
-		
-		return false;
-	}
-
-    /**
-     * if(s1>s2), return 1)
-     * @param s1
-     * @param s2
-     * @return
-     */
-	private static boolean compare(String s1, String s2) {
-		if(isDigital(s1)&&isDigital(s2)){
-			return Integer.valueOf(s1)>Integer.valueOf(s2)?true:false;
-		}
-		else if(!isDigital(s1)&&!isDigital(s2)){
-			int f1 = findFirstDigital(s1);
-			int f2 = findFirstDigital(s2);
-			if(f1 == -1 || f2 == -1){
-				//System.err.println("Error on "+s1+", "+s2);
-				if(s1.compareToIgnoreCase(s2)>0)
-					return true;
-				else 
-					return false;
-			}
-			String subv1 = s1.substring(f1);
-			String subv2 = s2.substring(f2);
-			
-			if(!isDigital(subv1)||!isDigital(subv2))
-				System.err.println("Error on "+s1+": "+subv1+", "+s2+": "+subv2);
-			
-			return Integer.valueOf(subv1)>Integer.valueOf(subv2)?true:false;
-			
-		}
-		
-		else{
-			if(!isDigital(s1))
-				return false;
-			else
-				return true;
-		}
-	}
-
-	private static boolean isDigital(String str) {
-		for (int i = str.length(); --i >= 0;) {
-			if (!Character.isDigit(str.charAt(i))) {
-				return false;
-			}
-		}
-		return true; 
-	}
-	
-
-	private static String[] breakTags(String vi) {
-		int firstdigital = findFirstDigital(vi);
-		return vi.substring(firstdigital).split("\\.|-|_");
-	}
-
-	private static int findFirstDigital(String str) {
-		Pattern pattern = Pattern.compile("[0-9]");
-		Matcher matcher = pattern.matcher(str); 
-		if(matcher.find()){
-			return str.indexOf(matcher.group());
-		}
-		return -1;
-	}
-
-	public static void generateBat(String batPath, String targetDir,
+    public static void generateBat(String batPath, String targetDir,
 	    String execDir, ArrayList<String> tags) throws IOException {
 	StringBuffer buffer = new StringBuffer();
 	File file = new File(batPath);
